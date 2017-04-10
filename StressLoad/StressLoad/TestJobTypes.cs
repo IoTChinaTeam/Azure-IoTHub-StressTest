@@ -1,0 +1,23 @@
+﻿namespace StressLoad
+{
+    public enum TestJobStatus
+    {
+        Unknown,
+        Created,
+        Provisioning,
+        Enqueued,
+        Running,
+        Finished,
+        Failed,
+        VerificationPassed,
+        VerificationFailed
+    }
+
+    public enum SizeOfVMType
+    {
+        small,  // 1 core /1.75G
+        medium, // 2 core /3.5G
+        large,  // 4 core / 7G
+        extralarge  // 8 core / 14G
+    }
+}
