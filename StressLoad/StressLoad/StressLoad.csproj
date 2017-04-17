@@ -175,15 +175,19 @@
     <Compile Include="Batch\BatchConnector.cs" />
     <Compile Include="Batch\BatchHelper.cs" />
     <Compile Include="Batch\IBatchConnector.cs" />
-    <Compile Include="DefaultKey.cs" />
+    <Compile Include="Helpers\ConfigurationProvider.cs" />
+    <Compile Include="Helpers\IConfigurationProvider.cs" />
+    <Compile Include="Models\DefaultKey.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestJob.cs" />
-    <Compile Include="TestJobTypes.cs" />
+    <Compile Include="Models\TestJob.cs" />
+    <Compile Include="Models\ResourceEnums.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

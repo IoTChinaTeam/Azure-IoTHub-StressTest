@@ -25,16 +25,9 @@ namespace StressLoad
             }
         }
 
-        public static string StorageConnectionString { get { return Connector.StorageConnectionString; } }
-
         public static async Task<bool> Deploy(this TestJob testJob)
         {
             return await Connector.Deploy(testJob);
-        }
-
-        public static async Task<TestJobStatus> GetStatus(this TestJob testJob)
-        {
-            return await Connector.GetStatus(testJob);
         }
 
         public static async Task<bool> DeleteTest(this TestJob testJob)

@@ -9,8 +9,6 @@ namespace StressLoad
 
         Task<bool> Deploy(TestJob testJob);
 
-        Task<TestJobStatus> GetStatus(TestJob testJob);
-
         Task<bool> DeleteTest(TestJob testJob);
 
         Task<bool> DeleteTest(BatchClient client, TestJob testJob);

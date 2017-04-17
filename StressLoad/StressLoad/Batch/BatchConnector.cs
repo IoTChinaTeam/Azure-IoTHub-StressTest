@@ -5,7 +5,6 @@ using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,19 +14,21 @@ namespace StressLoad
     public class BatchConnector : IBatchConnector
     {
         const string ContainerName = "stresstest";
-
-        public BatchConnector()
+        IConfigurationProvider configurationProvider;
+        public BatchConnector(IConfigurationProvider provider = null)
         {
-            BatchServiceUrl = ConfigurationManager.AppSettings["BatchServiceUrl"];
+            configurationProvider = provider == null ? new ConfigurationProvider() : provider;
+            
+            BatchServiceUrl = configurationProvider.GetConfigValue("BatchServiceUrl");
 
             var builder = new UriBuilder(BatchServiceUrl);
             BatchAccountName = builder.Host.Split('.').First();
-            BatchAccountKey = ConfigurationManager.AppSettings["BatchAccountKey"];
+            BatchAccountKey = configurationProvider.GetConfigValue("BatchAccountKey");
 
-            StorageConnectionString = ConfigurationManager.AppSettings["StorageConnectionString"];
+            StorageConnectionString = configurationProvider.GetConfigValue("StorageConnectionString");
             StorageAccount = CloudStorageAccount.Parse(StorageConnectionString);
 
-            BatchOsSize = ConfigurationManager.AppSettings["SizeOfVM"];
+            BatchOsSize = configurationProvider.GetConfigValue("SizeOfVM");
         }
 
         private string BatchServiceUrl { get; set; }
@@ -70,73 +71,7 @@ namespace StressLoad
             return true;
         }
 
-        public async Task<TestJobStatus> GetStatus(TestJob testJob)
-        {
-            BatchSharedKeyCredentials credentials = new BatchSharedKeyCredentials(BatchServiceUrl, BatchAccountName, BatchAccountKey);
-            using (BatchClient batchClient = await BatchClient.OpenAsync(credentials))
-            {
-                try
-                {
-                    var pool = await batchClient.PoolOperations.GetPoolAsync(TestJob.BatchPoolId);
-
-                    if (pool.CurrentDedicated < pool.TargetDedicated)
-                    {
-                        return TestJobStatus.Provisioning;
-                    }
-
-                    var nodes = pool.ListComputeNodes();
-
-                    if (nodes.Any(n => !n.State.HasValue || n.State.Value != ComputeNodeState.Idle))
-                    {
-                        if (nodes.Any(n => !n.State.HasValue || n.State.Value == ComputeNodeState.Creating || n.State.Value == ComputeNodeState.Starting))
-                        {
-                            return TestJobStatus.Provisioning;
-                        }
-                    }
-
-                    var tasks = batchClient.JobOperations.ListTasks(testJob.BatchJobId);
-                    if (tasks.Any(t => t.State.HasValue && t.State.Value == TaskState.Active))
-                    {
-                        // any task in queue
-                        return TestJobStatus.Enqueued;
-                    }
-
-                    if (tasks.Any(t => t.State.HasValue && t.State.Value != TaskState.Completed))
-                    {
-                        return TestJobStatus.Running;
-                    }
-
-                    Console.WriteLine("{0} - Finished job {1}", DateTime.Now.ToString("T"), testJob.BatchJobId);
-
-                    foreach (var t in tasks)
-                    {
-                        Console.WriteLine("Task {0}", t.Id);
-
-                        //Read the standard out of the task
-                        NodeFile standardOutFile = await t.GetNodeFileAsync(Microsoft.Azure.Batch.Constants.StandardOutFileName);
-                        string standardOutText = await standardOutFile.ReadAsStringAsync();
-                        Console.WriteLine("Standard out:");
-                        Console.WriteLine(standardOutText);
-
-                        //Read the standard error of the task
-                        NodeFile standardErrorFile = await t.GetNodeFileAsync(Microsoft.Azure.Batch.Constants.StandardErrorFileName);
-                        string standardErrorText = await standardErrorFile.ReadAsStringAsync();
-                        Console.WriteLine("Standard error:");
-                        Console.WriteLine(standardErrorText);
-
-                        Console.WriteLine();
-                    }
-
-                    return TestJobStatus.Finished;
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("{0} - Check status exception: {1}", DateTime.Now.ToString("T"), e.Message);
-                    return TestJobStatus.Unknown;
-                }
-            }
-        }
-
+    
         public async Task<bool> DeleteTest(TestJob testJob)
         {
             BatchSharedKeyCredentials credentials = new BatchSharedKeyCredentials(BatchServiceUrl, BatchAccountName, BatchAccountKey);
@@ -290,7 +225,7 @@ namespace StressLoad
                     testJob.MessagePerMin,
                     testJob.DurationInMin,
                     testJob.BatchJobId,
-                    ConfigurationManager.AppSettings["DeviceIdPrefix"],
+                    configurationProvider.GetConfigValue("DeviceIdPrefix"),
                     i.ToString().PadLeft(4, '0'),
                     testJob.Message.Replace("\"", "\\\""),
                     testJob.Transport);

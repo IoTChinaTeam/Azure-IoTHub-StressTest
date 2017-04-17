@@ -1,7 +1,6 @@
 ﻿using Microsoft.Azure.Devices;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
@@ -9,39 +8,50 @@ namespace StressLoad
 {
     class Program
     {
+        
         static void Main(string[] args)
+        {
+            IConfigurationProvider provider = new ConfigurationProvider();
+            SizeValidateHelper.ValidateSizeOfResources(provider);
+            RunStressLoad(provider,args);
+            Console.WriteLine("Complete the test");
+        }
+
+        private static void RunStressLoad(IConfigurationProvider provider,string[]args)
         {
             // if necessary
             if (args.Length > 0 && args[0] == "clean")
             {
-                RemoveDevices().Wait();
+                RemoveDevices(provider).Wait();
             }
-
-            var devicePerVm = int.Parse(ConfigurationManager.AppSettings["DevicePerVm"]);
-            var numofVM = int.Parse(ConfigurationManager.AppSettings["NumofVm"]);
+            var devicePerVm = int.Parse(provider.GetConfigValue("DevicePerVm"));
+            var numofVM = int.Parse(provider.GetConfigValue("NumofVm"));
             TestJob job = new TestJob
             {
                 JobId = DateTime.UtcNow.Ticks,
                 DevicePerVm = devicePerVm,
-                Message = ConfigurationManager.AppSettings["Message"],
-                Transport = ConfigurationManager.AppSettings["Transport"],
-                MessagePerMin = int.Parse(ConfigurationManager.AppSettings["MessagePerMin"]),
+                Message = provider.GetConfigValue("Message"),
+                Transport = provider.GetConfigValue("Transport"),
+                MessagePerMin = int.Parse(provider.GetConfigValue("MessagePerMin")),
                 NumofVm = numofVM,
-                SizeOfVM = (SizeOfVMType)Enum.Parse(typeof(SizeOfVMType), ConfigurationManager.AppSettings["SizeOfVM"]),
-                DeviceClientEndpoint = ConfigurationManager.AppSettings["DeviceClientEndpoint"],
-                DurationInMin = int.Parse(ConfigurationManager.AppSettings["DurationInMin"])
+                SizeOfVM = (SizeOfVMType)Enum.Parse(typeof(SizeOfVMType), provider.GetConfigValue("SizeOfVM")),
+                DeviceClientEndpoint = provider.GetConfigValue("DeviceClientEndpoint"),
+                DurationInMin = int.Parse(provider.GetConfigValue("DurationInMin"))
             };
 
             job.Deploy().Wait();
             job.DeleteTest().Wait();
-            Console.WriteLine("Complete the test");
         }
 
-        static async Task RemoveDevices()
+        static async Task RemoveDevices(IConfigurationProvider provider = null)
         {
+            if (provider == null)
+            {
+                provider = new ConfigurationProvider();
+            }
             Console.WriteLine($"Start to remove devices.");
 
-            var deviceClientEndpoint = ConfigurationManager.AppSettings["DeviceClientEndpoint"];
+            var deviceClientEndpoint = provider.GetConfigValue("DeviceClientEndpoint");
             var iotHubManager = RegistryManager.CreateFromConnectionString(deviceClientEndpoint);
 
             var sw = Stopwatch.StartNew();

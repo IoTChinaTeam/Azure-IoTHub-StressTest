@@ -1,0 +1,138 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location":{
+            "defaultValue":"placeholder",
+            "type":"String"
+        },
+        "batchAccounts_stressloadbatch_name": {
+            "defaultValue": "autobatch",
+            "type": "String"
+        },
+        "IotHubs_StressLoadHub_name": {
+            "defaultValue": "autohub",
+            "type": "String"
+        },
+        "storageAccounts_stressloadstorage_name": {
+            "defaultValue": "autosa",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "comments": "Generalized from resource: '/subscriptions/8d36226b-1a86-41f3-bfd8-6412bb8d01d2/resourceGroups/stressloadrg/providers/Microsoft.Batch/batchAccounts/stressloadbatch'.",
+            "type": "Microsoft.Batch/batchAccounts",
+            "name": "[parameters('batchAccounts_stressloadbatch_name')]",
+            "apiVersion": "2015-12-01",
+            "location": "[parameters('location')]",
+            "properties": {},
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/8d36226b-1a86-41f3-bfd8-6412bb8d01d2/resourceGroups/StressLoadRg/providers/Microsoft.Devices/IotHubs/StressLoadHub'.",
+            "type": "Microsoft.Devices/IotHubs",
+            "sku": {
+                "name": "S1",
+                "tier": "Standard",
+                "capacity": 1
+            },
+            "name": "[parameters('IotHubs_StressLoadHub_name')]",
+            "apiVersion": "2016-02-03",
+            "location":"[parameters('location')]",
+            "tags": {},
+            "properties": {
+                "ipFilterRules": [],
+                "eventHubEndpoints": {
+                    "events": {
+                        "retentionTimeInDays": 1,
+                        "partitionCount": 4,
+                        "partitionIds": [
+                            "0",
+                            "1",
+                            "2",
+                            "3"
+                        ],
+                        "path": "[concat(parameters('IotHubs_StressLoadHub_name'),'stressloadhub', parameters('IotHubs_StressLoadHub_name'))]",
+                        "endpoint": "sb://iothub-ns-stressload-146227-7997aaa17c.servicebus.windows.net/"
+                    },
+                    "operationsMonitoringEvents": {
+                        "retentionTimeInDays": 1,
+                        "partitionCount": 4,
+                        "partitionIds": [
+                            "0",
+                            "1",
+                            "2",
+                            "3"
+                        ],
+                        "path": "[concat(parameters('IotHubs_StressLoadHub_name'),'stressloadhub-operationmonitoring')]",
+                        "endpoint": "sb://iothub-ns-stressload-146227-7997aaa17c.servicebus.windows.net/"
+                    }
+                },
+                "routing": {
+                    "endpoints": {
+                        "serviceBusQueues": [],
+                        "serviceBusTopics": [],
+                        "eventHubs": []
+                    },
+                    "routes": [],
+                    "fallbackRoute": {
+                        "name": "$fallback",
+                        "source": "DeviceMessages",
+                        "condition": "true",
+                        "endpointNames": [
+                            "events"
+                        ],
+                        "isEnabled": true
+                    }
+                },
+                "storageEndpoints": {
+                    "$default": {
+                        "sasTtlAsIso8601": "PT1H",
+                        "connectionString": "",
+                        "containerName": ""
+                    }
+                },
+                "enableFileUploadNotifications": false,
+                "cloudToDevice": {
+                    "maxDeliveryCount": 10,
+                    "defaultTtlAsIso8601": "PT1H",
+                    "feedback": {
+                        "lockDurationAsIso8601": "PT1M",
+                        "ttlAsIso8601": "PT1H",
+                        "maxDeliveryCount": 10
+                    }
+                },
+                "operationsMonitoringProperties": {
+                    "events": {
+                        "None": "None",
+                        "Connections": "None",
+                        "DeviceTelemetry": "None",
+                        "C2DCommands": "None",
+                        "DeviceIdentityOperations": "None",
+                        "FileUploadOperations": "None",
+                        "Routes": "None"
+                    }
+                },
+                "features": "None"
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/8d36226b-1a86-41f3-bfd8-6412bb8d01d2/resourceGroups/stressloadrg/providers/Microsoft.Storage/storageAccounts/stressloadstorage'.",
+            "type": "Microsoft.Storage/storageAccounts",
+            "sku": {
+                "name": "Standard_RAGRS",
+                "tier": "Standard"
+            },
+            "kind": "Storage",
+            "name": "[parameters('storageAccounts_stressloadstorage_name')]",
+            "apiVersion": "2016-01-01",
+            "location": "[parameters('location')]",
+            "tags": {},
+            "properties": {},
+            "dependsOn": []
+        }
+    ]
+}

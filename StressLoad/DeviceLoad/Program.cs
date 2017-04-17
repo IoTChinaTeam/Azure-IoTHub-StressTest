@@ -98,7 +98,8 @@ namespace DeviceLoad
 
         private static Device GenerateDevice(int i)
         {
-            var device = new Device(DeviceIdGenerate(i))
+            var deviceId = setting.DeviceIdPrefix + "-" + i.ToString().PadLeft(10, '0');
+            var device = new Device(deviceId)
             {
                 Authentication = new AuthenticationMechanism
                 {
@@ -112,12 +113,7 @@ namespace DeviceLoad
 
             return device;
         }
-
-        private static string DeviceIdGenerate(int index)
-        {
-            return setting.DeviceIdPrefix + "-" + index.ToString().PadLeft(10, '0');
-        }
-
+ 
         static async Task SendMessages(List<Device> devices)
         {
             using (var cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total"))

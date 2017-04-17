@@ -180,9 +180,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\StressLoad\DefaultKey.cs">
-      <Link>DefaultKey.cs</Link>
-    </Compile>
+    <Compile Include="DefaultKey.cs" />
     <Compile Include="Setting.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

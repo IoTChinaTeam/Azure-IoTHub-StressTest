@@ -1,6 +1,4 @@
-﻿using System.Configuration;
-
-namespace StressLoad
+﻿namespace StressLoad
 {
     public class TestJob
     {
@@ -39,9 +37,10 @@ namespace StressLoad
             get; set;
         }
 
-        public static string GetBatchJobId(long jobId)
+        public static string GetBatchJobId(long jobId,IConfigurationProvider provider=null)
         {
-            return string.Format(ConfigurationManager.AppSettings["DeviceIdPrefix"] + jobId.ToString());
+            provider = provider ?? new ConfigurationProvider();
+            return string.Format(provider.GetConfigValue("DeviceIdPrefix") + jobId.ToString());
         }
     }
 }
