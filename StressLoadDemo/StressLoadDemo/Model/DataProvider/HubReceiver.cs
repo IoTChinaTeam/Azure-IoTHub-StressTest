@@ -103,8 +103,7 @@ namespace StressLoadDemo.Model.DataProvider
                         totalDevice = indicators.TotalDevices;
                         totalMessage = indicators.TotalMessages;
                         currentDate = DateTime.Now;
-                        runningTime = stopwatch.Elapsed;
-                        throughPut = (int)(indicators.TotalMessages / stopwatch.Elapsed.TotalMinutes);
+                        throughPut = indicators.DeviceToIoTHubDelay.Count;
                         deviceToHubDelayAvg = FormatDelay(indicators.DeviceToIoTHubDelay.StreamAvg);
                         deviceToHubDelayOneMin = FormatDelay(indicators.DeviceToIoTHubDelay.WindowAvg);
                         e2EDelay = FormatDelay(indicators.E2EDelay.StreamAvg);
@@ -116,6 +115,7 @@ namespace StressLoadDemo.Model.DataProvider
                 {
                     continue;
                 }
+                runningTime = stopwatch.Elapsed;
                 Thread.Sleep(100);
             }
         }
