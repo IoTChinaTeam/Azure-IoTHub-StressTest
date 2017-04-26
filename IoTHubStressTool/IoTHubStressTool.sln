@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26403.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeviceLoad", "DeviceLoad\DeviceLoad.csproj", "{38490692-34C8-4C80-9981-30A7A09310A8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StressLoad", "StressLoad\StressLoad.csproj", "{26C7092D-9AA0-45A3-8282-8682990B3EFA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IoTHubStressTool", "IoTHubStressTool\IoTHubStressTool.csproj", "{2C2C1F6F-2062-4745-BC7E-4EBE1B5B1EEC}"
 	ProjectSection(ProjectDependencies) = postProject
 		{38490692-34C8-4C80-9981-30A7A09310A8} = {38490692-34C8-4C80-9981-30A7A09310A8}
 	EndProjectSection
@@ -20,15 +20,12 @@ Global
 		{38490692-34C8-4C80-9981-30A7A09310A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{38490692-34C8-4C80-9981-30A7A09310A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{38490692-34C8-4C80-9981-30A7A09310A8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{26C7092D-9AA0-45A3-8282-8682990B3EFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{26C7092D-9AA0-45A3-8282-8682990B3EFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{26C7092D-9AA0-45A3-8282-8682990B3EFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{26C7092D-9AA0-45A3-8282-8682990B3EFA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C2C1F6F-2062-4745-BC7E-4EBE1B5B1EEC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C2C1F6F-2062-4745-BC7E-4EBE1B5B1EEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C2C1F6F-2062-4745-BC7E-4EBE1B5B1EEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C2C1F6F-2062-4745-BC7E-4EBE1B5B1EEC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.TransientFaultHandling.6.0.1304.0\lib\portable-net45+win+wp8
 	EndGlobalSection
 EndGlobal
