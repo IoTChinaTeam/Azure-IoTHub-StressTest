@@ -12,7 +12,6 @@ namespace StressLoad
         static void Main(string[] args)
         {
             IConfigurationProvider provider = new ConfigurationProvider();
-            SizeValidateHelper.ValidateSizeOfResources(provider);
             RunStressLoad(provider,args);
             Console.WriteLine("Complete the test");
         }

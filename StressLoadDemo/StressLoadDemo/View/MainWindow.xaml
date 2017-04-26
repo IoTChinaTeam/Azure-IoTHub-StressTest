@@ -1,0 +1,25 @@
+﻿<Window x:Class="StressLoadDemo.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:view="clr-namespace:StressLoadDemo.View"
+        mc:Ignorable="d"
+         Title="IoT Hub Stress Tool" Height="{Binding MainHeight}" Width="{Binding MainWidth}"
+        DataContext="{Binding Source={StaticResource Locator}, Path=Main}" SizeToContent="WidthAndHeight" FontSize="14" ResizeMode="NoResize"
+        >
+    <Grid Height="Auto">
+        <TabControl x:Name="TabControl" SelectedIndex="{Binding SelectedTabIndex}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+            <TabItem Header="TestSpec" >
+                <view:TabRequirementView/>
+            </TabItem>
+            <TabItem Header="Resource">
+                <view:TabResourceView />
+            </TabItem>
+            <TabItem Header="Monitor">
+                <view:TabMonitorView/>
+            </TabItem>
+        </TabControl>
+
+    </Grid>
+</Window>
