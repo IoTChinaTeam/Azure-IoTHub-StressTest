@@ -27,9 +27,9 @@
         </Viewbox>
         <GroupBox Header="{Binding TimeStamp}" HorizontalAlignment="Left" Height="162" Margin="10,528,0,0" VerticalAlignment="Top" Width="930">
             <Grid >
-                <Label Content="Device-To-Hub Delay (last minitue)" HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="Bold" Margin="465,57,0,0"/>
+                <Label Content="Device-To-Hub Delay (last minute)" HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="Bold" Margin="465,57,0,0"/>
                 <Label Content="Device-To-Hub Delay (average)" HorizontalAlignment="Left" Margin="10,57,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
-                <Label Content="Throughput for partition (last minitue)" HorizontalAlignment="Left" Margin="10,101,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
+                <Label Content="Throughput for partition (last minute)" HorizontalAlignment="Left" Margin="10,101,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
                 <Label Content="{Binding Throughput}" HorizontalAlignment="Left" Margin="320,101,0,0" VerticalAlignment="Top" Width="153"/>
                 <Label Content="{Binding DeviceToHubDelayAvg}" HorizontalAlignment="Left" Margin="230,57,0,0" VerticalAlignment="Top" Width="144"/>
                 <Label Content="Monitor runnning  time" HorizontalAlignment="Left" Margin="10,13,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
