@@ -42,11 +42,12 @@ namespace StressLoadDemo.ViewModel
         bool _txtEnabled, _comboEnabled;
         string _elapasedTime;
         string _startTime;
-        private ObservableCollection<string> _partitions { get; set; }
         string _testRunTime, _throughput, _d2hAvg, _d2h1Min,_e2eDelay;
         Stopwatch localwatch;
         string _localRunTime, _timestamp;
         bool _portalBtnEnabled;
+
+        private ObservableCollection<string> _partitions { get; set; }
 
         public string TimeStamp
         {
@@ -86,7 +87,6 @@ namespace StressLoadDemo.ViewModel
             _refreshTaskTimer.Interval = 5000;
             Reload = new RelayCommand(StartCollecting);
         }
-
 
         #region UIBindingProperties
 
@@ -384,6 +384,7 @@ namespace StressLoadDemo.ViewModel
             }
         }
         #endregion
+        
         void GoToPortal()
         {
             Process.Start("http://www.webpage.com");
@@ -461,8 +462,8 @@ namespace StressLoadDemo.ViewModel
                     }
                 }
                 var totalCount = list.Count();
-                var activeCount = list.Count(m => m.State == TaskState.Active || m.State == TaskState.Preparing);
-                var runningCount = list.Count(m => m.State == TaskState.Running);
+                var activeCount = list.Count(m => m.State == TaskState.Active);
+                var runningCount = list.Count(m => m.State == TaskState.Running || m.State == TaskState.Preparing);
                 var completeCount = list.Count(m => m.State == TaskState.Completed);
                 _taskTotalCount = totalCount;_taskActiveCount = activeCount;
                 _taskCompletedCount = completeCount;_taskRunningCount = runningCount;
@@ -492,14 +493,12 @@ namespace StressLoadDemo.ViewModel
             _messageNumberBuffer.Add(_messageRealTimeNumber);
             _deviceNumberBuffer.Add(_deviceRealTimeNumber);
 
-            var runtimestring = _hubDataReceiver.runningTime.ToString();
-
             var delaystringavg = _hubDataReceiver.deviceToHubDelayAvg;
             if (!string.IsNullOrEmpty(delaystringavg))
             {
                 try
                 {
-                    DeviceToHubDelayAvg = runtimestring.Substring(0, 11);
+                    DeviceToHubDelayAvg = delaystringavg.Substring(0, 11);
                 }
                 catch
                 {
