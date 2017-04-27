@@ -22,42 +22,34 @@ namespace StressLoadDemo.ViewModel
         const string AzureChinaCloudAllResourcesPage ="https://portal.azure.cn/#blade/HubsExtension/Resources/resourceType/Microsoft.Resources%2Fresources";
         private const double CanvasWidth = 415;
         private const double CanvasHeight = 216;
-        private string _batchJobId;
+
+        private IStressDataProvider _dataProvider;
+        private HubReceiver _hubDataReceiver;
+        bool _portalBtnEnabled;
+
+        //timer to control refresh frequency
         private readonly Timer _refreshDataTimer, _refreshTaskTimer;
+
+        //graph-related
         private double _deviceRealTimeNumber, _messageRealTimeNumber;
         private ObservableCollection<MonitorDataLine> _deviceLines, _messageLines;
         private List<MonitorDataLine> _deviceLineBuffer, _messageLineBuffer;
         private List<double> _deviceNumberBuffer, _messageNumberBuffer;
-        private IStressDataProvider _dataProvider;
-        private string _selectedPartition;
-        private HubReceiver _hubDataReceiver;
-        private DateTime _firstDataArriveTime;
-        private string _consumerGroupName;
-        private string _azureAllResourceUrl;
+
+        //partition-specification
+        private string _selectedPartition, _consumerGroupName;
         private bool _refreshBtnEnabled;
         private Visibility _shadeVisibility;
-        private string _taskStatus;
-        private int _taskActiveCount, _taskRunningCount, _taskCompletedCount, _taskTotalCount;
-        private string _messageContent, _fromDevice;
         bool _txtEnabled, _comboEnabled;
-        string _elapasedTime;
-        string _startTime;
-        string _testRunTime, _throughput, _d2hAvg, _d2h1Min,_e2eDelay;
+
+        //monitor data
         Stopwatch localwatch;
         string _localRunTime, _timestamp;
-        bool _portalBtnEnabled;
-
-        private ObservableCollection<string> _partitions { get; set; }
-
-        public string TimeStamp
-        {
-            get{ return _timestamp; }
-            set
-            {
-                _timestamp = value;
-                RaisePropertyChanged();
-            }
-        }
+        private string _azureAllResourceUrl;
+        private int _taskActiveCount, _taskRunningCount, _taskCompletedCount, _taskTotalCount;
+        private string _messageContent, _fromDevice, _taskStatus;
+        private string _batchJobId,_elapasedTime, _startTime,_testRunTime, _throughput, _d2hAvg, _d2h1Min,_e2eDelay;
+        
         public TabMonitorViewModel(IStressDataProvider provider)
         {
             _consumerGroupName = "$Default";
@@ -87,15 +79,27 @@ namespace StressLoadDemo.ViewModel
             _refreshTaskTimer.Interval = 5000;
             Reload = new RelayCommand(StartCollecting);
         }
+        #region UIBindingPropertiesAndCommands
 
-        #region UIBindingProperties
+        public RelayCommand ShowAzurePortal =>
+           new RelayCommand(() =>
+           {
+               Process.Start(_azureAllResourceUrl);
+           });
 
-        public RelayCommand ShowAzurePortal => 
-            new RelayCommand(() => 
+        private ObservableCollection<string> _partitions { get; set; }
+
+        public string TimeStamp
+        {
+            get { return _timestamp; }
+            set
             {
-                Process.Start(_azureAllResourceUrl);
-            });
+                _timestamp = value;
+                RaisePropertyChanged();
+            }
+        }
 
+       
         public string LocalElapsedTime
         {
             get { return _localRunTime; }
@@ -405,7 +409,6 @@ namespace StressLoadDemo.ViewModel
             RefreshBtnEnabled = false;
             _refreshTaskTimer.Enabled = true;
             _refreshDataTimer.Enabled = true;
-            _firstDataArriveTime = DateTime.Now;
             _messageLineBuffer = new List<MonitorDataLine>();
             _deviceLineBuffer = new List<MonitorDataLine>();
             _messageNumberBuffer = new List<double>();
@@ -520,7 +523,7 @@ namespace StressLoadDemo.ViewModel
             }
 
             MessageContent = _hubDataReceiver.sampleContent;
-            Throughput = _hubDataReceiver.throughPut.ToString() + " messages/minute";
+            Throughput = (_hubDataReceiver.throughPut*queryPartitionNumber).ToString() + " messages/minute";
             FromDevice = _hubDataReceiver.sampleEventSender;
 
             if (TaskTotalCount == TaskCompleteCount && TaskTotalCount != 0)
@@ -544,13 +547,11 @@ namespace StressLoadDemo.ViewModel
                 ElapsedTime = $"{allsec / 60} m {allsec % 60} s";
                 TransformDataToLines(
                     _deviceNumberBuffer
-                    .ToList()
                     .Skip((int)Math.Max(0, _deviceNumberBuffer.Count - CanvasWidth / 2))
                     .ToList()
                     , ref _deviceLineBuffer);
                 TransformDataToLines(
                     _messageNumberBuffer
-                    .ToList()
                     .Skip((int)Math.Max(0, _messageNumberBuffer.Count - CanvasWidth / 2))
                     .ToList()
                     , ref _messageLineBuffer);
