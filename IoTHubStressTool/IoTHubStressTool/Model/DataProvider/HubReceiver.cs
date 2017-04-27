@@ -116,7 +116,6 @@ namespace StressLoadDemo.Model.DataProvider
                     continue;
                 }
                 runningTime = stopwatch.Elapsed;
-                Thread.Sleep(100);
             }
         }
 
