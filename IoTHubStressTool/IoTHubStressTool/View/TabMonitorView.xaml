@@ -25,17 +25,21 @@
         <Viewbox Margin="390,57,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Panel.ZIndex="4" Width="50">
             <Label x:Name="label2_Copy1"  Content="{Binding DeviceRealTimeNumber}" HorizontalAlignment="Left"  FontSize="16" Panel.ZIndex="4"/>
         </Viewbox>
-        <GroupBox Header="{Binding TimeStamp}" HorizontalAlignment="Left" Height="162" Margin="10,528,0,0" VerticalAlignment="Top" Width="930">
+        <GroupBox Header="{Binding TimeStamp}" HorizontalAlignment="Left" Height="162" Margin="10,504,0,0" VerticalAlignment="Top" Width="930">
             <Grid >
-                <Label Content="Device-To-Hub Delay (last minute)" HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="Bold" Margin="465,57,0,0"/>
-                <Label Content="Device-To-Hub Delay (average)" HorizontalAlignment="Left" Margin="10,57,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
-                <Label Content="Throughput for partition (last minute)" HorizontalAlignment="Left" Margin="10,101,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
-                <Label Content="{Binding Throughput}" HorizontalAlignment="Left" Margin="320,101,0,0" VerticalAlignment="Top" Width="153"/>
-                <Label Content="{Binding DeviceToHubDelayAvg}" HorizontalAlignment="Left" Margin="230,57,0,0" VerticalAlignment="Top" Width="144"/>
+                <Label Content="Device-To-Hub Delay (last minute)" HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="Bold" Margin="461,39,0,0"/>
+                <Label Content="Device-To-Hub Delay (average)" HorizontalAlignment="Left" Margin="10,39,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
+                <Label Content="Throughput for partition (last minute)" HorizontalAlignment="Left" Margin="10,65,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
+                <Label Content="{Binding Throughput}" HorizontalAlignment="Left" Margin="299,65,0,0" VerticalAlignment="Top" Width="153"/>
+                <Label Content="{Binding DeviceToHubDelayAvg}" HorizontalAlignment="Left" Margin="299,39,0,0" VerticalAlignment="Top" Width="144"/>
                 <Label Content="Monitor runnning  time" HorizontalAlignment="Left" Margin="10,13,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
-                <Label x:Name="label7" Content="{Binding LocalElapsedTime}" HorizontalAlignment="Left" Margin="230,13,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.71,0.538"/>
-                <Button x:Name="button1" IsEnabled="{Binding PortalBtnEnabled}" Command="{Binding ShowAzurePortal}" Content="View Metrics In Portal" HorizontalAlignment="Left" Margin="763,108,0,0" VerticalAlignment="Top" Width="145" Height="22"/>
-                <Label Content="{Binding DeviceToHubDelay1Min }" HorizontalAlignment="Left" Margin="712,57,0,0" VerticalAlignment="Top" Width="144"/>
+                <Label x:Name="label7" Content="{Binding LocalElapsedTime}" HorizontalAlignment="Left" Margin="299,13,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.71,0.538"/>
+                <Button x:Name="button1" IsEnabled="{Binding PortalBtnEnabled}" Command="{Binding ShowAzurePortal}" Content="View Metrics In Portal" HorizontalAlignment="Left" Margin="761,117,0,0" VerticalAlignment="Top" Width="145" Height="22"/>
+                <Label Content="{Binding DeviceToHubDelay1Min }" HorizontalAlignment="Left" Margin="714,39,0,0" VerticalAlignment="Top" Width="144"/>
+                <Label Content="Throughput for IoT Hub (last minute)" HorizontalAlignment="Left" Margin="9,91,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
+                <Label Content="{Binding HubThroughput}" HorizontalAlignment="Left" Margin="299,90,0,0" VerticalAlignment="Top" Width="354"/>
+                <Label Content="Number of partitions in IoT Hub" HorizontalAlignment="Left" Margin="461,65,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
+                <Label Content="{Binding PartitionCount}" HorizontalAlignment="Left" Margin="714,64,0,0" VerticalAlignment="Top" Width="153"/>
 
             </Grid>
         </GroupBox>
@@ -45,23 +49,23 @@
         <Label x:Name="label4_Copy" Content="{Binding StartTime}" HorizontalAlignment="Left" Margin="500,324,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
         <Label x:Name="label5" Content="{Binding ElapsedTime}" HorizontalAlignment="Left" Margin="389,328,0,0" VerticalAlignment="Top"/>
         <Label x:Name="label5_Copy" Content="{Binding ElapsedTime}" HorizontalAlignment="Left" Margin="866,328,0,0" VerticalAlignment="Top"/>
-        <GroupBox x:Name="groupBox" Header="Batch" HorizontalAlignment="Left" Height="147" Margin="10,366,0,0" VerticalAlignment="Top" Width="445">
+        <GroupBox x:Name="groupBox" Header="Batch" HorizontalAlignment="Left" Height="133" Margin="10,366,0,0" VerticalAlignment="Top" Width="445">
             <Grid>
                 <Label x:Name="label2" Content="Job Id" HorizontalAlignment="Left" Height="29" Margin="4,9,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
-                <Label x:Name="label2_Copy2" Content="{Binding BatchJobId}" HorizontalAlignment="Left" Height="29" Margin="150,5,0,0" VerticalAlignment="Top"/>
+                <Label x:Name="label2_Copy2" Content="{Binding BatchJobId}" HorizontalAlignment="Left" Height="29" Margin="136,5,0,0" VerticalAlignment="Top"/>
                 <Label x:Name="label2_Copy3" HorizontalAlignment="Left" Height="29" Margin="235,7,0,0" VerticalAlignment="Top"/>
-                <Label x:Name="label3" Content="Task Status" HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="Bold" Height="29" Margin="4,49,0,0"/>
-                <Label x:Name="label3_Copy5" Content="{Binding TaskStatus}" HorizontalAlignment="Left" Margin="150,45,0,0" VerticalAlignment="Top"/>
-                <Label Content="Job running time" HorizontalAlignment="Left" Margin="4,89,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
-                <Label Content="{Binding TestRunTime}" HorizontalAlignment="Left" Margin="150,89,0,0" VerticalAlignment="Top" Height="26"/>
+                <Label x:Name="label3" Content="Task Status" HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="Bold" Height="29" Margin="4,38,0,0"/>
+                <Label x:Name="label3_Copy5" Content="{Binding TaskStatus}" HorizontalAlignment="Left" Margin="136,40,0,0" VerticalAlignment="Top"/>
+                <Label Content="Job running time" HorizontalAlignment="Left" Margin="4,67,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
+                <Label Content="{Binding TestRunTime}" HorizontalAlignment="Left" Margin="136,66,0,0" VerticalAlignment="Top" Height="26"/>
             </Grid>
         </GroupBox>
-        <GroupBox x:Name="groupBox1" Header="Last Fetched Message" HorizontalAlignment="Left" Height="147" Margin="485,366,0,0" VerticalAlignment="Top" Width="445">
+        <GroupBox x:Name="groupBox1" Header="Last Fetched Message" HorizontalAlignment="Left" Height="133" Margin="485,366,0,0" VerticalAlignment="Top" Width="445">
             <Grid>
-                <Label Content="Last Fetched Message Content" HorizontalAlignment="Left" Margin="10,9,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
-                <TextBlock  Text="{Binding MessageContent}" HorizontalAlignment="Left" TextWrapping="Wrap" Margin="28,40,0,0" VerticalAlignment="Top" Width="395" Height="39"/>
-                <Label Content="{Binding FromDevice}" HorizontalAlignment="Left" Margin="118,84,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.484,2.038"/>
-                <Label Content="From Device" HorizontalAlignment="Left" Margin="10,84,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
+                <Label Content="Content" HorizontalAlignment="Left" Margin="5,31,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
+                <TextBlock  Text="{Binding MessageContent}" HorizontalAlignment="Left" TextWrapping="Wrap" Margin="23,55,0,0" VerticalAlignment="Top" Width="395" Height="39"/>
+                <Label Content="{Binding FromDevice}" HorizontalAlignment="Left" Margin="113,6,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.484,2.038"/>
+                <Label Content="From Device" HorizontalAlignment="Left" Margin="5,6,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
 
             </Grid>
         </GroupBox>

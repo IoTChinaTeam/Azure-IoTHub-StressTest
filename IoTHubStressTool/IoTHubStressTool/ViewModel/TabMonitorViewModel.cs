@@ -18,8 +18,8 @@ namespace StressLoadDemo.ViewModel
 {
     public class TabMonitorViewModel : ViewModelBase
     {
-        const string AzureCloudAllResourcesPage ="https://ms.portal.azure.com/#blade/HubsExtension/Resources/resourceType/Microsoft.Resources%2Fresources";
-        const string AzureChinaCloudAllResourcesPage ="https://portal.azure.cn/#blade/HubsExtension/Resources/resourceType/Microsoft.Resources%2Fresources";
+        const string AzureCloudAllResourcesPage = "https://ms.portal.azure.com/#blade/HubsExtension/Resources/resourceType/Microsoft.Resources%2Fresources";
+        const string AzureChinaCloudAllResourcesPage = "https://portal.azure.cn/#blade/HubsExtension/Resources/resourceType/Microsoft.Resources%2Fresources";
         private const double CanvasWidth = 415;
         private const double CanvasHeight = 216;
 
@@ -48,8 +48,8 @@ namespace StressLoadDemo.ViewModel
         private string _azureAllResourceUrl;
         private int _taskActiveCount, _taskRunningCount, _taskCompletedCount, _taskTotalCount;
         private string _messageContent, _fromDevice, _taskStatus;
-        private string _batchJobId,_elapasedTime, _startTime,_testRunTime, _throughput, _d2hAvg, _d2h1Min,_e2eDelay;
-        
+        private string _batchJobId, _elapasedTime, _startTime, _testRunTime, _throughput, _d2hAvg, _d2h1Min, _hubthroughput, _partitioncount;
+
         public TabMonitorViewModel(IStressDataProvider provider)
         {
             _consumerGroupName = "$Default";
@@ -58,10 +58,10 @@ namespace StressLoadDemo.ViewModel
             _dataProvider = provider;
             _shadeVisibility = Visibility.Hidden;
             _partitions = new ObservableCollection<string>();
-            _messageContent = "N/A";_fromDevice = "N/A";
+            _messageContent = "N/A"; _fromDevice = "N/A";
             TestRunTime = "N/A"; Throughput = "N/A";
-            DeviceToHubDelayAvg = "N/A";DeviceToHubDelay1Min = "N/A";
-            _taskStatus = "N/A"; _localRunTime= "N/A";
+            DeviceToHubDelayAvg = "N/A"; DeviceToHubDelay1Min = "N/A";
+            _taskStatus = "N/A"; _localRunTime = "N/A";
             Messenger.Default.Register<IStressDataProvider>(
                this,
                "StartMonitor",
@@ -89,6 +89,25 @@ namespace StressLoadDemo.ViewModel
 
         private ObservableCollection<string> _partitions { get; set; }
 
+        public string PartitionCount
+        {
+            get { return _partitioncount; }
+            set
+            {
+                _partitioncount = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public string HubThroughput
+        {
+            get { return _hubthroughput; }
+            set
+            {
+                _hubthroughput = value;
+                RaisePropertyChanged();
+            }
+        }
         public string TimeStamp
         {
             get { return _timestamp; }
@@ -99,7 +118,7 @@ namespace StressLoadDemo.ViewModel
             }
         }
 
-       
+
         public string LocalElapsedTime
         {
             get { return _localRunTime; }
@@ -118,7 +137,7 @@ namespace StressLoadDemo.ViewModel
                 _batchJobId = value;
                 RaisePropertyChanged();
             }
-        } 
+        }
         public bool PortalBtnEnabled
         {
             get { return _portalBtnEnabled; }
@@ -129,7 +148,8 @@ namespace StressLoadDemo.ViewModel
             }
         }
         public string ElapsedTime
-        {   get { return _elapasedTime; }
+        {
+            get { return _elapasedTime; }
             set
             {
                 _elapasedTime = value;
@@ -388,7 +408,7 @@ namespace StressLoadDemo.ViewModel
             }
         }
         #endregion
-        
+
         void GoToPortal()
         {
             Process.Start("http://www.webpage.com");
@@ -415,7 +435,7 @@ namespace StressLoadDemo.ViewModel
             _deviceNumberBuffer = new List<double>();
             DeviceLines = new ObservableCollection<MonitorDataLine>();
             MessageLines = new ObservableCollection<MonitorDataLine>();
-            DeviceRealTimeNumber = 0; MessageRealTimeNumber = 0;           
+            DeviceRealTimeNumber = 0; MessageRealTimeNumber = 0;
         }
 
         public void ProcessMonitorConfig(IStressDataProvider provider)
@@ -468,8 +488,8 @@ namespace StressLoadDemo.ViewModel
                 var activeCount = list.Count(m => m.State == TaskState.Active);
                 var runningCount = list.Count(m => m.State == TaskState.Running || m.State == TaskState.Preparing);
                 var completeCount = list.Count(m => m.State == TaskState.Completed);
-                _taskTotalCount = totalCount;_taskActiveCount = activeCount;
-                _taskCompletedCount = completeCount;_taskRunningCount = runningCount;
+                _taskTotalCount = totalCount; _taskActiveCount = activeCount;
+                _taskCompletedCount = completeCount; _taskRunningCount = runningCount;
                 TaskStatus = $"(Total:{totalCount}  Active:{activeCount}  Running:{runningCount}  Completed:{completeCount})";
             }
         }
@@ -487,6 +507,7 @@ namespace StressLoadDemo.ViewModel
                 }
                 Partitions = partitionIds;
             }
+            PartitionCount = Partitions.Count.ToString();
 
             //get real time number and calculate the curve
             MessageRealTimeNumber = _hubDataReceiver.totalMessage;
@@ -523,7 +544,9 @@ namespace StressLoadDemo.ViewModel
             }
 
             MessageContent = _hubDataReceiver.sampleContent;
-            Throughput = (_hubDataReceiver.throughPut*queryPartitionNumber).ToString() + " messages/minute";
+            Throughput = (_hubDataReceiver.throughPut).ToString() + " messages/minute";
+            HubThroughput = $"≈ {_hubDataReceiver.throughPut * Partitions.Count}  messages/minute";
+
             FromDevice = _hubDataReceiver.sampleEventSender;
 
             if (TaskTotalCount == TaskCompleteCount && TaskTotalCount != 0)
@@ -535,14 +558,14 @@ namespace StressLoadDemo.ViewModel
                 _refreshDataTimer.Enabled = false;
                 StartTime = "0";
                 var allsec = (int)_hubDataReceiver.runningTime.TotalSeconds;
-                ElapsedTime = $"{allsec/60} m {allsec%60} s";
+                ElapsedTime = $"{allsec / 60} m {allsec % 60} s";
                 TransformDataToLines(_deviceNumberBuffer, ref _deviceLineBuffer);
                 TransformDataToLines(_messageNumberBuffer, ref _messageLineBuffer);
             }
 
             else
             {
-                StartTime = _deviceNumberBuffer.Count >( CanvasWidth / 2)? "...":"0";
+                StartTime = _deviceNumberBuffer.Count > (CanvasWidth / 2) ? "..." : "0";
                 var allsec = (int)_hubDataReceiver.runningTime.TotalSeconds;
                 ElapsedTime = $"{allsec / 60} m {allsec % 60} s";
                 TransformDataToLines(
