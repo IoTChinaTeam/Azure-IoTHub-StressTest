@@ -1,10 +1,15 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace StressLoadDemo.Helpers.Configuration
 {
-    public class ExternalProvider : IConfigurationProvider
+    public static class ConfigurationHelper
     {
-        public string GetConfigValue(string configName)
+        public static string ReadConfig(string configName)
         {
             try
             {
@@ -14,11 +19,6 @@ namespace StressLoadDemo.Helpers.Configuration
             {
                 return string.Empty;
             }
-        }
-
-        public void PutConfigValue(string configName, string configValue)
-        {
-            //not implemented.
         }
     }
 }

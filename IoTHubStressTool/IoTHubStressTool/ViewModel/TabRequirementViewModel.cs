@@ -2,6 +2,7 @@
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using StressLoadDemo.Helpers;
+using StressLoadDemo.Helpers.Configuration;
 using StressLoadDemo.Model.AzureConstants;
 using StressLoadDemo.Model.DataProvider;
 using StressLoadDemo.Model.Utility;
@@ -35,7 +36,17 @@ namespace StressLoadDemo.ViewModel
             _iothubrecommendation = "";
             _vmRecommendation= "";
             _buttonEnabled = false;
+
+            var totaldevice = ConfigurationHelper.ReadConfig(Constants.TotalDevice_ConfigName);
+            var messagefreq = ConfigurationHelper.ReadConfig(Constants.MessageFreq_ConfigName);
+            var duration = ConfigurationHelper.ReadConfig(Constants.ExpectDuration_ConfigName);
+
+            TotalDevice = totaldevice;
+            MessagePerMinPerDevice = messagefreq;
+            TestDuration = duration;
         }
+
+        #region UIBindingPropertiesAndCommands
 
         public RelayCommand OpenHubLink => new RelayCommand(()=>
         {
@@ -158,20 +169,21 @@ namespace StressLoadDemo.ViewModel
                 RaisePropertyChanged();
             }
         }
+        #endregion
 
-        public void RecommendHub(int messagePerminute)
+        void RecommendHub(int messagePerminute)
         {
             _hubInfo = SkuCalculator.CalculateHubSku(messagePerminute);
             HubSkuRecommendation = _hubInfo.UnitSize.ToString() + " x " + _hubInfo.UnitCount;
         }
 
-        public void RecommendVm(int totalDevice)
+        void RecommendVm(int totalDevice)
         {
             _vmInfo = SkuCalculator.CalculateVmSku(totalDevice);
             VmSkuRecommendation = _vmInfo.Size.ToString() + " x " + _vmInfo.VmCount;
         }
 
-        public void TryActivateButton()
+        void TryActivateButton()
         {
             if (_testDuration != 0
                 && _totalMessagePerMinute != 0

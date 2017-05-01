@@ -45,7 +45,7 @@ namespace StressLoadDemo.Model.AzureObject
 
         public static string GetBatchJobId(long jobId, IConfigurationProvider provider = null)
         {
-            provider = provider ?? new InternalProvider();
+            provider = provider ?? new ConfigurationProvider();
             var jobid= string.Format(provider.GetConfigValue("DeviceIdPrefix") + jobId.ToString());
             Messenger.Default.Send(jobid,"BatchJobId");
             return jobid;

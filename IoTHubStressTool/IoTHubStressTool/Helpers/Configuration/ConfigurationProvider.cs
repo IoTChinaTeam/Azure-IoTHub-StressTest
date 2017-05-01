@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 
 namespace StressLoadDemo.Helpers.Configuration
 {
-    class InternalProvider : IConfigurationProvider
+    class ConfigurationProvider : IConfigurationProvider
     {
         Dictionary<string, string> configurations;
-        public InternalProvider()
+        public ConfigurationProvider()
         {
             configurations = new Dictionary<string, string>();
         }

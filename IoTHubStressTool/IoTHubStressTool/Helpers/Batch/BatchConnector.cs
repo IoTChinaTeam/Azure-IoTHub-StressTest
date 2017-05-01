@@ -21,7 +21,7 @@ namespace StressLoadDemo.Helpers.Batch
         IConfigurationProvider configurationProvider;
         public BatchConnector(IConfigurationProvider provider = null)
         {
-            configurationProvider = provider == null ? new InternalProvider() : provider;
+            configurationProvider = provider == null ? new ConfigurationProvider() : provider;
 
             BatchServiceUrl = configurationProvider.GetConfigValue("BatchServiceUrl");
 

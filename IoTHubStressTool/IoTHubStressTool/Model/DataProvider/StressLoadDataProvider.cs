@@ -30,7 +30,7 @@ namespace StressLoadDemo.Model.DataProvider
 
         public void Run(IConfigurationProvider provider = null)
         {
-            provider = provider ?? new InternalProvider();
+            provider = provider ?? new ConfigurationProvider();
             provider.PutConfigValue("NumofVm", NumOfVm);
             provider.PutConfigValue("DevicePerVm", DevicePerVm);
             provider.PutConfigValue("SizeOfVM", VmSize);

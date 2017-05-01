@@ -104,7 +104,6 @@ namespace StressLoadDemo.ViewModel
         public MainViewModel(IStressDataProvider provider)
         {
             _dataProvider = provider;
-
         }
 
         public void AppendBatchJobId(string batchJobId)

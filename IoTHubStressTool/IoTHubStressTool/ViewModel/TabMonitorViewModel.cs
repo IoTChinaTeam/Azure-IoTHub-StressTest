@@ -11,8 +11,10 @@ using Microsoft.Azure.Batch;
 using Microsoft.Azure.Batch.Auth;
 using StressLoadDemo.Model.DataProvider;
 using Microsoft.Azure.Batch.Common;
-using StressLoadDemo.Model.Utility;
 using GalaSoft.MvvmLight.Command;
+using LiveCharts;
+using LiveCharts.Wpf;
+using System.Windows.Media;
 
 namespace StressLoadDemo.ViewModel
 {
@@ -20,8 +22,6 @@ namespace StressLoadDemo.ViewModel
     {
         const string AzureCloudAllResourcesPage = "https://ms.portal.azure.com/#blade/HubsExtension/Resources/resourceType/Microsoft.Resources%2Fresources";
         const string AzureChinaCloudAllResourcesPage = "https://portal.azure.cn/#blade/HubsExtension/Resources/resourceType/Microsoft.Resources%2Fresources";
-        private const double CanvasWidth = 415;
-        private const double CanvasHeight = 216;
 
         private IStressDataProvider _dataProvider;
         private HubReceiver _hubDataReceiver;
@@ -32,9 +32,6 @@ namespace StressLoadDemo.ViewModel
 
         //graph-related
         private double _deviceRealTimeNumber, _messageRealTimeNumber;
-        private ObservableCollection<MonitorDataLine> _deviceLines, _messageLines;
-        private List<MonitorDataLine> _deviceLineBuffer, _messageLineBuffer;
-        private List<double> _deviceNumberBuffer, _messageNumberBuffer;
 
         //partition-specification
         private string _selectedPartition, _consumerGroupName;
@@ -78,7 +75,10 @@ namespace StressLoadDemo.ViewModel
             _refreshDataTimer.Interval = 1000;
             _refreshTaskTimer.Interval = 5000;
             Reload = new RelayCommand(StartCollecting);
+            Labels = new List<string>();
+            InitChart();
         }
+
         #region UIBindingPropertiesAndCommands
 
         public RelayCommand ShowAzurePortal =>
@@ -259,29 +259,6 @@ namespace StressLoadDemo.ViewModel
             }
         }
 
-        public ObservableCollection<MonitorDataLine> MessageLines
-        {
-            get { return _messageLines; }
-            set
-            {
-                _messageLines = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public ObservableCollection<MonitorDataLine> DeviceLines
-        {
-            get
-            {
-                return _deviceLines;
-            }
-            set
-            {
-                _deviceLines = value;
-                RaisePropertyChanged();
-            }
-        }
-
         public double MessageRealTimeNumber
         {
             get { return _messageRealTimeNumber; }
@@ -409,6 +386,44 @@ namespace StressLoadDemo.ViewModel
         }
         #endregion
 
+
+        // live chart binding properties
+        public SeriesCollection DeviceSeriesCollection { get; set; }
+
+        public SeriesCollection MessageSeriesCollection { get; set; }
+        public List<string> Labels { get; set; }
+        public Func<double, string> YFormatter { get; set; }
+
+
+        void InitChart()
+        {
+            MessageSeriesCollection = new SeriesCollection
+            {
+                new LineSeries
+               {
+                    Title = "",
+                    Values = new ChartValues<double> (),
+                    PointGeometry = DefaultGeometries.None,
+
+                    //PointGeometrySize = 10
+
+                }
+            };
+            DeviceSeriesCollection = new SeriesCollection
+            {
+                new LineSeries
+               {
+                    Title = "DeviceNumber",
+                    Values = new ChartValues<double> (),
+                    //PointGeometrySize = 10
+                }
+            };
+            YFormatter = value => Math.Round(value).ToString();
+            
+
+
+        }
+
         void GoToPortal()
         {
             Process.Start("http://www.webpage.com");
@@ -429,16 +444,12 @@ namespace StressLoadDemo.ViewModel
             RefreshBtnEnabled = false;
             _refreshTaskTimer.Enabled = true;
             _refreshDataTimer.Enabled = true;
-            _messageLineBuffer = new List<MonitorDataLine>();
-            _deviceLineBuffer = new List<MonitorDataLine>();
-            _messageNumberBuffer = new List<double>();
-            _deviceNumberBuffer = new List<double>();
-            DeviceLines = new ObservableCollection<MonitorDataLine>();
-            MessageLines = new ObservableCollection<MonitorDataLine>();
+            MessageSeriesCollection[0].Values = new ChartValues<double>();
+            DeviceSeriesCollection[0].Values = new ChartValues<double>();
             DeviceRealTimeNumber = 0; MessageRealTimeNumber = 0;
         }
 
-        public void ProcessMonitorConfig(IStressDataProvider provider)
+        void ProcessMonitorConfig(IStressDataProvider provider)
         {
             _hubDataReceiver = new HubReceiver(provider);
             BatchJobId = provider.BatchJobId;
@@ -464,7 +475,8 @@ namespace StressLoadDemo.ViewModel
 
         void ObserveTask(object sender, ElapsedEventArgs e)
         {
-            //get task running status
+            //Connect to batch to get task status.
+            //todo: job status sometimes overlaps.
             var builder = new UriBuilder(_dataProvider.BatchUrl);
             var BatchAccountName = builder.Host.Split('.').First();
             BatchSharedKeyCredentials credentials = new BatchSharedKeyCredentials(_dataProvider.BatchUrl, BatchAccountName, _dataProvider.BatchKey);
@@ -509,14 +521,11 @@ namespace StressLoadDemo.ViewModel
             }
             PartitionCount = Partitions.Count.ToString();
 
-            //get real time number and calculate the curve
+            //get real time number to mark on the curve
             MessageRealTimeNumber = _hubDataReceiver.totalMessage;
             DeviceRealTimeNumber = _hubDataReceiver.totalDevice;
 
-            //collect data for generating graph
-            _messageNumberBuffer.Add(_messageRealTimeNumber);
-            _deviceNumberBuffer.Add(_deviceRealTimeNumber);
-
+            //update properties for monitoring data
             var delaystringavg = _hubDataReceiver.deviceToHubDelayAvg;
             if (!string.IsNullOrEmpty(delaystringavg))
             {
@@ -529,7 +538,6 @@ namespace StressLoadDemo.ViewModel
                     DeviceToHubDelayAvg = "N/A";
                 }
             }
-
             var delaystring1min = _hubDataReceiver.deviceToHubDelayOneMin;
             if (!string.IsNullOrEmpty(delaystring1min))
             {
@@ -542,44 +550,12 @@ namespace StressLoadDemo.ViewModel
                     DeviceToHubDelay1Min = "N/A";
                 }
             }
-
             MessageContent = _hubDataReceiver.sampleContent;
             Throughput = (_hubDataReceiver.throughPut).ToString() + " messages/minute";
             HubThroughput = $"≈ {_hubDataReceiver.throughPut * Partitions.Count}  messages/minute";
-
             FromDevice = _hubDataReceiver.sampleEventSender;
-
-            if (TaskTotalCount == TaskCompleteCount && TaskTotalCount != 0)
-            {
-                //stop working threads
-                localwatch.Stop();
-                _hubDataReceiver.PauseReceive();
-                _refreshTaskTimer.Enabled = false;
-                _refreshDataTimer.Enabled = false;
-                StartTime = "0";
-                var allsec = (int)_hubDataReceiver.runningTime.TotalSeconds;
-                ElapsedTime = $"{allsec / 60} m {allsec % 60} s";
-                TransformDataToLines(_deviceNumberBuffer, ref _deviceLineBuffer);
-                TransformDataToLines(_messageNumberBuffer, ref _messageLineBuffer);
-            }
-
-            else
-            {
-                StartTime = _deviceNumberBuffer.Count > (CanvasWidth / 2) ? "..." : "0";
-                var allsec = (int)_hubDataReceiver.runningTime.TotalSeconds;
-                ElapsedTime = $"{allsec / 60} m {allsec % 60} s";
-                TransformDataToLines(
-                    _deviceNumberBuffer
-                    .Skip((int)Math.Max(0, _deviceNumberBuffer.Count - CanvasWidth / 2))
-                    .ToList()
-                    , ref _deviceLineBuffer);
-                TransformDataToLines(
-                    _messageNumberBuffer
-                    .Skip((int)Math.Max(0, _messageNumberBuffer.Count - CanvasWidth / 2))
-                    .ToList()
-                    , ref _messageLineBuffer);
-            }
-
+            var allsec = (int)_hubDataReceiver.runningTime.TotalSeconds;
+            ElapsedTime = $"{allsec / 60} m {allsec % 60} s";
             var datetimestring = DateTime.Now.ToString("HH:mm:ss");
             TimeStamp = $"Details(updated at {datetimestring})";
             var elapsedstring = localwatch.Elapsed.ToString();
@@ -595,41 +571,26 @@ namespace StressLoadDemo.ViewModel
                 }
             }
 
-            DeviceLines = new ObservableCollection<MonitorDataLine>(_deviceLineBuffer);
-            MessageLines = new ObservableCollection<MonitorDataLine>(_messageLineBuffer);
+            //Update chart
+            MessageSeriesCollection[0].Values.Add(_messageRealTimeNumber);
+            Labels.Add(ElapsedTime);
+            DeviceSeriesCollection[0].Values.Add(_deviceRealTimeNumber);
+
+            //check job status and stop refreshing.
+            if (TaskTotalCount == TaskCompleteCount && TaskTotalCount != 0)
+            {
+                //stop working threads
+                localwatch.Stop();
+                _hubDataReceiver.PauseReceive();
+                _refreshTaskTimer.Enabled = false;
+                _refreshDataTimer.Enabled = false;
+            }
         }
 
         void IsSwitchingEnabled(bool flag)
         {
             TxtEnabled = flag;
             ComboEnabled = flag;
-        }
-
-        void TransformDataToLines(List<double> data, ref List<MonitorDataLine> targetLines)
-        {
-            targetLines = new List<MonitorDataLine>();
-            if (data.Count > 1)
-            {
-                var maxY = data.Max();
-                var rangeY = maxY - data.Min();
-                var scaleY = CanvasHeight / rangeY;
-                if (rangeY == 0 && maxY == 0) return;
-
-                var verticalShift = maxY > 0 ? scaleY * maxY : -scaleY * maxY;
-                var xUnit = CanvasWidth / (data.Count - 1);
-                double prevX = 0, prevY = verticalShift - scaleY * data[0];
-                var temp = new List<MonitorDataLine>();
-                data.Take(data.Count - 1).ToList().ForEach(p =>
-                {
-                    p = verticalShift - p * scaleY;
-
-                    temp.Add(new MonitorDataLine() { X1 = prevX, Y1 = prevY, X2 = prevX + xUnit, Y2 = p });
-
-                    prevX += xUnit;
-                    prevY = p;
-                });
-                targetLines = temp;
-            }
         }
     }
 }
