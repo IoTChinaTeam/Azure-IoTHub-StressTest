@@ -25,8 +25,6 @@ namespace StressLoadDemo.ViewModel
         private readonly IStressDataProvider _dataProvider;
 
         private int _selectedTabIndex;
-        private bool _testStart;
-        private bool _monitorStart;
         int[] tabW = { 830, 950, 950 };
         int[] tabH = { 400, 710, 600 };
         int _mainW, _mainH;
@@ -76,47 +74,9 @@ namespace StressLoadDemo.ViewModel
             }
         }
 
-        public bool MonitorStart
-        {
-            get { return _monitorStart; }
-            set
-            {
-                if (value!=_monitorStart)
-                {
-                    _monitorStart = value;
-                    Messenger.Default.Send<IStressDataProvider>(_dataProvider, "StartMonitor");
-                }
-            }
-        }
-
-        public bool TestStart
-        {
-            get { return _testStart;}
-            set
-            {
-                if (value)
-                {
-                    Messenger.Default.Send<IStressDataProvider>(_dataProvider, "StartTest");
-                }
-            }
-        }
-        
         public MainViewModel(IStressDataProvider provider)
         {
             _dataProvider = provider;
-        }
-
-        public void AppendBatchJobId(string batchJobId)
-        {
-            _dataProvider.BatchJobId = batchJobId;
-        }
-        public void AppendToProvider(RequirementMessage message)
-        {
-            _dataProvider.NumOfVm = message.VmCount.ToString();
-            _dataProvider.DevicePerVm = message.NumberOfDevicePerVm.ToString();
-            _dataProvider.ExpectTestDuration = message.TestDuration.ToString();
-            _dataProvider.MessagePerMinute = message.MessagePerMinPerDevice;
-            _dataProvider.VmSize = message.AzureVmSize.ToString();
         }
     }
 }

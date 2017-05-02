@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Windows;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
-using StressLoadDemo.Model;
+using StressLoadDemo.Helpers.Configuration;
 using StressLoadDemo.Model.DataProvider;
 using StressLoadDemo.Model.Utility;
-using System.Windows.Media;
-using System.Configuration;
-using StressLoadDemo.Helpers.Configuration;
+using System.Windows;
 
 namespace StressLoadDemo.ViewModel
 {
@@ -34,9 +27,12 @@ namespace StressLoadDemo.ViewModel
         private string _batchServiceUrl;
         private string _batchAccountKey;
         private string _storageAccountConnectionString;
-        
+
+        //monitor param
+        private string _batchJobId;
         //UI control params
-        private bool _canStartTest;
+        private bool _canStartCreate;
+        private bool _canStartMonitor;
         string logmsg;
         bool isLogsChangedPropertyInViewModel;
 
@@ -57,12 +53,6 @@ namespace StressLoadDemo.ViewModel
                 this,
                 "AppendRequirementParam",
                 data => AppendToProvider(data)
-                );
-            //receive message from mainwindow, start deploy
-            Messenger.Default.Register<IStressDataProvider>(
-                this,
-                "StartTest",
-                data => ProcessRunConfigValue(data)
                 );
             //receive message from data provider, show log
             Messenger.Default.Register<string>(
@@ -89,11 +79,35 @@ namespace StressLoadDemo.ViewModel
             _currentDeployPhase = DeployPhase.DeployStarted;
             _currentPhaseStatus = PhaseStatus.Succeeded;
             _dataProvider = provider;
-            _canStartTest = false;
+            _canStartCreate = false;
             LoadConfig();
         }
 
         #region BindingProperties
+
+        public bool CanStartCreate
+        {
+            get
+            {
+                return _canStartCreate;
+            }
+            set
+            {
+                _canStartCreate = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool CanStartMonitor
+        {
+            get { return _canStartMonitor; }
+            set
+            {
+                _canStartMonitor = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public int ProgressValue
         {
             get { return _progressBarValue; }
@@ -103,6 +117,19 @@ namespace StressLoadDemo.ViewModel
                 RaisePropertyChanged();
             }
         }
+
+        public string BatchJobId
+        {
+            get
+            {return _batchJobId;}
+            set
+            {
+                _batchJobId = value;
+                RaisePropertyChanged();
+                TryActivateMonitorButton();
+            }
+        }
+
         public Visibility StartLableVisibility
         {
             get
@@ -165,7 +192,9 @@ namespace StressLoadDemo.ViewModel
             }
         }
 
-        public RelayCommand StartTest => new RelayCommand(RunTest);
+        public RelayCommand StartTest => new RelayCommand(ProcessRunConfigValue);
+
+        public RelayCommand StartMonitor => new RelayCommand(RunMonitor);
 
         public string LogMsg
         {
@@ -184,7 +213,7 @@ namespace StressLoadDemo.ViewModel
             {
                 _specDeviceCount = value;
                 RaisePropertyChanged();
-                TryActivateButton();
+                TryActivateCreateButton();
             }
         }
 
@@ -195,7 +224,7 @@ namespace StressLoadDemo.ViewModel
             {
                 _specMsgFreq = value;
                 RaisePropertyChanged();
-                TryActivateButton();
+                TryActivateCreateButton();
             }
         }
 
@@ -206,20 +235,7 @@ namespace StressLoadDemo.ViewModel
             {
                 _specDuration = value;
                 RaisePropertyChanged();
-                TryActivateButton();
-            }
-        }
-
-        public bool CanStartTest
-        {
-            get
-            {
-                return _canStartTest;
-            }
-            set
-            {
-                _canStartTest = value;
-                RaisePropertyChanged();
+                TryActivateCreateButton();
             }
         }
 
@@ -230,7 +246,8 @@ namespace StressLoadDemo.ViewModel
             {
                 _hubOwnerConnectionString = value;
                 RaisePropertyChanged();
-                TryActivateButton();
+                TryActivateCreateButton();
+                TryActivateMonitorButton();
             }
         }
 
@@ -244,7 +261,8 @@ namespace StressLoadDemo.ViewModel
             {
                 _eventHubEndpoint = value;
                 RaisePropertyChanged();
-                TryActivateButton();
+                TryActivateCreateButton();
+                TryActivateMonitorButton();
 
             }
         }
@@ -256,7 +274,7 @@ namespace StressLoadDemo.ViewModel
             {
                 _batchServiceUrl = value;
                 RaisePropertyChanged();
-                TryActivateButton();
+                TryActivateCreateButton();
             }
         }
 
@@ -267,7 +285,7 @@ namespace StressLoadDemo.ViewModel
             {
                 _batchAccountKey = value;
                 RaisePropertyChanged();
-                TryActivateButton();
+                TryActivateCreateButton();
             }
         }
 
@@ -278,7 +296,7 @@ namespace StressLoadDemo.ViewModel
             {
                 _storageAccountConnectionString = value;
                 RaisePropertyChanged();
-                TryActivateButton();
+                TryActivateCreateButton();
             }
         }
         public bool IsLogsChangedPropertyInViewModel
@@ -292,11 +310,6 @@ namespace StressLoadDemo.ViewModel
         }
         #endregion
 
-        void RunTest()
-        {
-            new ViewModelLocator().Main.TestStart = true;
-            StartLableVisibility = Visibility.Visible;
-        }  
 
         void LoadConfig()
         {
@@ -305,9 +318,14 @@ namespace StressLoadDemo.ViewModel
             var sastring = ConfigurationHelper.ReadConfig(Constants.StorageAccountConectionString_ConfigName);
             var batchkey = ConfigurationHelper.ReadConfig(Constants.BatchKey_ConfigName);
             var batchurl = ConfigurationHelper.ReadConfig(Constants.BatchUrl_ConfigName);
+            var batchjobid = ConfigurationHelper.ReadConfig(Constants.BatchJobId_ConfigName);
             if (!string.IsNullOrEmpty(hubstring))
             {
                 HubOwnerConnectionString = hubstring;
+            }
+            if (!string.IsNullOrEmpty(batchjobid))
+            {
+                BatchJobId = batchjobid;
             }
             if (!string.IsNullOrEmpty(ehendpoint))
             {
@@ -367,26 +385,44 @@ namespace StressLoadDemo.ViewModel
                 case 4:
                     FinishLableVisibility = Visibility.Visible;
                     ProgressValue = 4;
-                    MoveOnToMonitor();
+                    RunMonitor();
                     break;
             }
             var CurrentPhaseStatus = status.Status;
         }
 
-        void MoveOnToMonitor()
+        void RunMonitor()
         {
-            var mainvm = new ViewModelLocator().Main;
-            mainvm.MonitorStart = true;
+            CanStartCreate = false;
+            CanStartMonitor = false;
+            _dataProvider.BatchKey = _batchAccountKey;
+            _dataProvider.HubOwnerConectionString = _hubOwnerConnectionString;
+            _dataProvider.EventHubEndpoint = _eventHubEndpoint;
+            _dataProvider.BatchUrl = _batchServiceUrl;
+            if (string.IsNullOrEmpty(_dataProvider.BatchJobId))
+            {
+                _dataProvider.BatchJobId = _batchJobId;
+            }
+            Messenger.Default.Send<IStressDataProvider>(_dataProvider, "StartMonitor");
+
+
         }
 
-        void ProcessRunConfigValue(IStressDataProvider provider)
+        void ProcessRunConfigValue()
         {
-            provider.BatchKey = _batchAccountKey;
-            provider.HubOwnerConectionString = _hubOwnerConnectionString;
-            provider.EventHubEndpoint = _eventHubEndpoint;
-            provider.BatchUrl = _batchServiceUrl;
-            provider.StorageAccountConectionString = _storageAccountConnectionString;
-            provider.Run();
+            if (CanStartCreate)
+            {
+                StartLableVisibility = Visibility.Visible;
+                CanStartCreate = false;
+                CanStartMonitor = false;
+                _dataProvider.BatchKey = _batchAccountKey;
+                _dataProvider.HubOwnerConectionString = _hubOwnerConnectionString;
+                _dataProvider.EventHubEndpoint = _eventHubEndpoint;
+                _dataProvider.BatchUrl = _batchServiceUrl;
+                _dataProvider.StorageAccountConectionString = _storageAccountConnectionString;
+                _dataProvider.Run();
+            }
+
         }
 
         void AppendBatchJobId(string batchJobId)
@@ -394,7 +430,23 @@ namespace StressLoadDemo.ViewModel
             _dataProvider.BatchJobId = batchJobId;
         }
 
-        void TryActivateButton()
+        void TryActivateMonitorButton()
+        {
+            //hub connection string , event hub endpoint and batch job id
+            //must be provided
+            if (!(string.IsNullOrEmpty(_hubOwnerConnectionString) ||
+              string.IsNullOrEmpty(_eventHubEndpoint)||
+              string.IsNullOrEmpty(_batchJobId)))
+            {
+                CanStartMonitor = true;
+            }
+            else
+            {
+                CanStartMonitor = false;
+            }
+        }
+
+        void TryActivateCreateButton()
         {
             if (!(string.IsNullOrEmpty(_hubOwnerConnectionString) ||
                 string.IsNullOrEmpty(_eventHubEndpoint) ||
@@ -403,11 +455,11 @@ namespace StressLoadDemo.ViewModel
                 string.IsNullOrEmpty(_storageAccountConnectionString) ||
                 _dataProvider.MessagePerMinute == 0))
             {
-                CanStartTest = true;
+                CanStartCreate = true;
             }
             else
             {
-                CanStartTest = false;
+                CanStartCreate = false;
             }
         }
     }

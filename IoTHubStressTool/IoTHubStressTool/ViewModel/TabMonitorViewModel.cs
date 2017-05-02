@@ -456,6 +456,7 @@ namespace StressLoadDemo.ViewModel
             _hubDataReceiver.StartReceive();
             localwatch = Stopwatch.StartNew();
             StartCollecting();
+            Messenger.Default.Send($"Monitoring started, please switch to monitor tab", "RunningLog");
             IsSwitchingEnabled(true);
             EnablePortalBtn();
         }
