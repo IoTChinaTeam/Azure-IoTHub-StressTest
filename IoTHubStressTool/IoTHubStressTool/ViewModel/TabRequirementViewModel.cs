@@ -50,17 +50,17 @@ namespace StressLoadDemo.ViewModel
 
         public RelayCommand OpenHubLink => new RelayCommand(()=>
         {
-            System.Diagnostics.Process.Start("https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-devguide-quotas-throttling");
+            System.Diagnostics.Process.Start("https://www.azure.cn/pricing/details/iot-hub/");
         });
 
         public RelayCommand OpenPriceLinkChina => new RelayCommand(()=> 
         {
-            System.Diagnostics.Process.Start("https://www.azure.cn/pricing/details/iot-hub/");
+            System.Diagnostics.Process.Start("https://www.azure.cn/pricing/calculator/iot-hub/");
         });
         
         public RelayCommand OpenPriceLinkGlobal => new RelayCommand(() =>
         {
-            System.Diagnostics.Process.Start("https://azure.microsoft.com/zh-cn/pricing/details/iot-hub/");
+            System.Diagnostics.Process.Start("https://azure.microsoft.com/zh-cn/pricing/calculator/?service=iot-hub");
         });
 
         public RelayCommand SendSpecToTab2 => new RelayCommand(

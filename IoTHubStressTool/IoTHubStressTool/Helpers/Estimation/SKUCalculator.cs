@@ -5,9 +5,9 @@ namespace StressLoadDemo.Helpers
 {
     public static class SkuCalculator
     {
-        public const double IothubS1Speed = 720;
-        public const double IothubS2Speed = 7200;
-        public const double IothubS3Speed = 360000;
+        public const double IothubS1Speed = 278;
+        public const double IothubS2Speed = 4166;
+        public const double IothubS3Speed = 208333;
 
         public const double VmSmallCapacity = 10000;
 

@@ -270,7 +270,6 @@
     <Compile Include="Model\DataProvider\ReceiverTool\Indicator.cs" />
     <Compile Include="Model\Utility\Constants.cs" />
     <Compile Include="Model\Utility\DeployEnums.cs" />
-    <Compile Include="Model\Utility\MonitorDataLine.cs" />
     <Compile Include="Model\DataProvider\ReceiverTool\ReceiverSettings.cs" />
     <Compile Include="Model\Utility\InAppMessages.cs" />
     <Compile Include="Model\AzureConstants\VmSku.cs" />
