@@ -13,24 +13,9 @@ This tab helps to convert from expections, such as total device count, message r
 #### 2. Provision or assign Azure resources
 We need to use Azure Batch service to simulate the device (which need a storage account too) and azure IoT Hub to handle the devices.
 
-- ![Tab1 Image](https://raw.githubusercontent.com/IoTChinaTeam/Azure-IoTHub-StressTest/YihuiWpf/ScreenShots/tab2.PNG)
-
-##### a.IoT Hub owner connection string and Event Hub endpoint of the same IoT Hub
-You can find them here in azure portal
-
-- ![Tab1 Image](https://raw.githubusercontent.com/IoTChinaTeam/Azure-IoTHub-StressTest/YihuiWpf/ScreenShots/iothubownerstr.PNG)
-- ![Tab1 Image](https://raw.githubusercontent.com/IoTChinaTeam/Azure-IoTHub-StressTest/YihuiWpf/ScreenShots/eventhubendpoint.PNG)
-
-##### b.Azure Batch Service URL and access key
-You can find them here in azure portal
-
-- ![Tab1 Image](https://raw.githubusercontent.com/IoTChinaTeam/Azure-IoTHub-StressTest/YihuiWpf/ScreenShots/batchurl.PNG)
-- ![Tab1 Image](https://raw.githubusercontent.com/IoTChinaTeam/Azure-IoTHub-StressTest/YihuiWpf/ScreenShots/batchkey.PNG)
-
-##### c.Azure Storage Account connection string.
-You can find them here in azure portal
-
-- ![Tab1 Image](https://raw.githubusercontent.com/IoTChinaTeam/Azure-IoTHub-StressTest/YihuiWpf/ScreenShots/storageaccountstring.PNG)
+- IoT Hub owner connection string and Event Hub endpoint of the same IoT Hub
+- Azure Batch Service URL and access key
+- Azure Storage Account connection string (needed for batch service)
 
 #### 3.Create and start job in Batch Service
 
