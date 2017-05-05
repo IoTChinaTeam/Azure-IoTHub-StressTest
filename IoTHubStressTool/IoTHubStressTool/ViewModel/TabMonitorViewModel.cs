@@ -406,7 +406,7 @@ namespace StressLoadDemo.ViewModel
                {
                     Title = "",
                     Values = new ChartValues<double> (),
-                    PointGeometry = DefaultGeometries.None,
+                    PointGeometry = DefaultGeometries.None
 
                     //PointGeometrySize = 10
 
@@ -418,6 +418,7 @@ namespace StressLoadDemo.ViewModel
                {
                     Title = "DeviceNumber",
                     Values = new ChartValues<double> (),
+                    PointGeometry = DefaultGeometries.None
                     //PointGeometrySize = 10
                 }
             };
