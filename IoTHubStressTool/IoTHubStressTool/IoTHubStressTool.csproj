@@ -266,9 +266,10 @@
     <Compile Include="Model\AzureObject\TestJob.cs" />
     <Compile Include="Model\DataProvider\HubReceiver.cs" />
     <Compile Include="Model\DataProvider\ReceiverTool\Settings.cs" />
+    <Compile Include="Model\DataProvider\ReceiverTool\SingletonReceiver.cs" />
     <Compile Include="Model\DataProvider\StressLoadDataProvider.cs" />
     <Compile Include="Model\DataProvider\ReceiverTool\Indicator.cs" />
-    <Compile Include="Model\Utility\Constants.cs" />
+    <Compile Include="Model\Utility\StressToolConstants.cs" />
     <Compile Include="Model\Utility\DeployEnums.cs" />
     <Compile Include="Model\DataProvider\ReceiverTool\ReceiverSettings.cs" />
     <Compile Include="Model\Utility\InAppMessages.cs" />
@@ -322,7 +323,9 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resource\chart_background.PNG">

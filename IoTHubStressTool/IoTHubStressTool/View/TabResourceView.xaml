@@ -19,8 +19,10 @@
                 <TextBox MaxLines="1" x:Name="TxtBoxBatchUrl" HorizontalAlignment="Left" Height="23" Margin="274,6,0,0" TextWrapping="NoWrap"  AcceptsReturn="False" Text="{Binding BatchServiceUrl,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="634"/>
                 <Label x:Name="LbAccountKey" Content="Account Key" HorizontalAlignment="Left" Margin="10,28,0,0" VerticalAlignment="Top" FontSize="14"/>
                 <TextBox MaxLines="1" x:Name="TxtBoxAccountKey" HorizontalAlignment="Left" Height="22" Margin="274,33,0,0" TextWrapping="NoWrap"  AcceptsReturn="False" Text="{Binding BatchAccountKey,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="634"/>
-                <Label x:Name="LbBatchUrl_Copy" Content="Existing Batch Job Id (Optional)" HorizontalAlignment="Left" Margin="10,58,0,0" VerticalAlignment="Top" Height="32" FontSize="14"/>
-                <TextBox MaxLines="1" x:Name="TxtBoxBatchUrl_Copy" HorizontalAlignment="Left" Height="23" Margin="274,62,0,0" TextWrapping="NoWrap"  AcceptsReturn="False" Text="{Binding BatchJobId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="634"/>
+                <Label x:Name="LbBatchUrl_Copy" Content="Existing Batch Job Id " HorizontalAlignment="Left" Margin="10,58,0,0" VerticalAlignment="Top" Height="32" FontSize="14"/>
+                <RadioButton x:Name="radioButton" Content="CreateNew" IsChecked="{Binding CreateNewJobId}" HorizontalAlignment="Left" Margin="385,66,0,0" VerticalAlignment="Top"/>
+                <RadioButton x:Name="radioButton_Copy" Content="Use Existing" IsChecked="{Binding UseExistingJobId}" HorizontalAlignment="Left" Margin="549,66,0,0" VerticalAlignment="Top"/>
+                <ComboBox x:Name="comboBox" IsEnabled="{Binding UseExistingJobId}" HorizontalAlignment="Left" Margin="695,63,0,0" VerticalAlignment="Top" Width="213" ItemsSource="{Binding BatchJobIds}" SelectedIndex="{Binding JobIdSelectedIndex}"/>
             </Grid>
         </GroupBox>
         <GroupBox x:Name="SaGroupBox" Header="Storage Account" HorizontalAlignment="Left" Margin="10,330,0,0" VerticalAlignment="Top" Height="63" Width="930" FontSize="14">

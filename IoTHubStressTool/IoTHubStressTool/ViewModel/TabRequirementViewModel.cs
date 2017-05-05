@@ -37,9 +37,9 @@ namespace StressLoadDemo.ViewModel
             _vmRecommendation= "";
             _buttonEnabled = false;
 
-            var totaldevice = ConfigurationHelper.ReadConfig(Constants.TotalDevice_ConfigName);
-            var messagefreq = ConfigurationHelper.ReadConfig(Constants.MessageFreq_ConfigName);
-            var duration = ConfigurationHelper.ReadConfig(Constants.ExpectDuration_ConfigName);
+            var totaldevice = ConfigurationHelper.ReadConfig(StressToolConstants.TotalDevice_ConfigName);
+            var messagefreq = ConfigurationHelper.ReadConfig(StressToolConstants.MessageFreq_ConfigName);
+            var duration = ConfigurationHelper.ReadConfig(StressToolConstants.ExpectDuration_ConfigName);
 
             TotalDevice = totaldevice;
             MessagePerMinPerDevice = messagefreq;
@@ -50,7 +50,7 @@ namespace StressLoadDemo.ViewModel
 
         public RelayCommand OpenHubLink => new RelayCommand(()=>
         {
-            System.Diagnostics.Process.Start("https://www.azure.cn/pricing/details/iot-hub/");
+            System.Diagnostics.Process.Start("https://azure.microsoft.com/en-us/pricing/details/iot-hub/");
         });
 
         public RelayCommand OpenPriceLinkChina => new RelayCommand(()=> 
@@ -60,7 +60,7 @@ namespace StressLoadDemo.ViewModel
         
         public RelayCommand OpenPriceLinkGlobal => new RelayCommand(() =>
         {
-            System.Diagnostics.Process.Start("https://azure.microsoft.com/zh-cn/pricing/calculator/?service=iot-hub");
+            System.Diagnostics.Process.Start("https://azure.microsoft.com/en-us/pricing/calculator/?service=iot-hub");
         });
 
         public RelayCommand SendSpecToTab2 => new RelayCommand(

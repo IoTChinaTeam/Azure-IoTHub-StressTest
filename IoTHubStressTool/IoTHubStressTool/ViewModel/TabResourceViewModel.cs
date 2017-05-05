@@ -1,9 +1,16 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
+using Microsoft.Azure.Batch;
+using Microsoft.Azure.Batch.Auth;
+using Microsoft.Azure.Batch.Common;
 using StressLoadDemo.Helpers.Configuration;
 using StressLoadDemo.Model.DataProvider;
 using StressLoadDemo.Model.Utility;
+using System;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace StressLoadDemo.ViewModel
@@ -30,11 +37,15 @@ namespace StressLoadDemo.ViewModel
 
         //monitor param
         private string _batchJobId;
+        private ObservableCollection<string> _batchJobs;
+
         //UI control params
         private bool _canStartCreate;
         private bool _canStartMonitor;
         string logmsg;
         bool isLogsChangedPropertyInViewModel;
+        bool _newJobId, _useExistingJobId;
+        int _selectedJobIdIndex;
 
         //Progress bar params
         public DeployPhase _currentDeployPhase;
@@ -74,7 +85,11 @@ namespace StressLoadDemo.ViewModel
                );
 
             //init ui controls
+            _selectedJobIdIndex = -1;
+            UseExistingJobId = false;
+            CreateNewJobId = true;
             _lableVisibilities = new Visibility[5] {Visibility.Hidden,Visibility.Hidden,Visibility.Hidden,Visibility.Hidden,Visibility.Hidden };
+            _batchJobs = new ObservableCollection<string>();
             _specDeviceCount = _specDuration = _specMsgFreq = "Not Specified";
             _currentDeployPhase = DeployPhase.DeployStarted;
             _currentPhaseStatus = PhaseStatus.Succeeded;
@@ -84,6 +99,66 @@ namespace StressLoadDemo.ViewModel
         }
 
         #region BindingProperties
+
+        
+        public int JobIdSelectedIndex
+        {
+            get
+            {
+                return _selectedJobIdIndex;
+            }
+            set
+            {
+                _selectedJobIdIndex = value;
+                if(value!=-1&&_batchJobId!= BatchJobIds[value])
+                {
+                    _batchJobId = BatchJobIds[value];
+                    TryActivateMonitorButton();
+                    TryActivateCreateButton();
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public bool UseExistingJobId
+        {
+            get { return _useExistingJobId; }
+            set
+            {
+                _useExistingJobId = value;
+                if(value == true)
+                {
+                    TryGetBatchJobIds();
+                }
+                TryActivateMonitorButton();
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool CreateNewJobId
+        {
+            get { return _newJobId; }
+            set
+            {
+                _newJobId = value;
+                TryActivateCreateButton();
+                TryActivateMonitorButton();
+                RaisePropertyChanged();
+            }
+        }
+
+        public ObservableCollection<string> BatchJobIds
+        {
+            get
+            {
+                return _batchJobs;
+            }
+            set
+            {
+                _batchJobs = value;
+                RaisePropertyChanged();
+            }
+        }
 
         public bool CanStartCreate
         {
@@ -118,17 +193,6 @@ namespace StressLoadDemo.ViewModel
             }
         }
 
-        public string BatchJobId
-        {
-            get
-            {return _batchJobId;}
-            set
-            {
-                _batchJobId = value;
-                RaisePropertyChanged();
-                TryActivateMonitorButton();
-            }
-        }
 
         public Visibility StartLableVisibility
         {
@@ -313,19 +377,19 @@ namespace StressLoadDemo.ViewModel
 
         void LoadConfig()
         {
-            var hubstring = ConfigurationHelper.ReadConfig(Constants.HubOwnerConectionString_ConfigName);
-            var ehendpoint = ConfigurationHelper.ReadConfig(Constants.EventHubEndpoint_ConfigName);
-            var sastring = ConfigurationHelper.ReadConfig(Constants.StorageAccountConectionString_ConfigName);
-            var batchkey = ConfigurationHelper.ReadConfig(Constants.BatchKey_ConfigName);
-            var batchurl = ConfigurationHelper.ReadConfig(Constants.BatchUrl_ConfigName);
-            var batchjobid = ConfigurationHelper.ReadConfig(Constants.BatchJobId_ConfigName);
+            var hubstring = ConfigurationHelper.ReadConfig(StressToolConstants.HubOwnerConectionString_ConfigName);
+            var ehendpoint = ConfigurationHelper.ReadConfig(StressToolConstants.EventHubEndpoint_ConfigName);
+            var sastring = ConfigurationHelper.ReadConfig(StressToolConstants.StorageAccountConectionString_ConfigName);
+            var batchkey = ConfigurationHelper.ReadConfig(StressToolConstants.BatchKey_ConfigName);
+            var batchurl = ConfigurationHelper.ReadConfig(StressToolConstants.BatchUrl_ConfigName);
+            var batchjobid = ConfigurationHelper.ReadConfig(StressToolConstants.BatchJobId_ConfigName);
             if (!string.IsNullOrEmpty(hubstring))
             {
                 HubOwnerConnectionString = hubstring;
             }
             if (!string.IsNullOrEmpty(batchjobid))
             {
-                BatchJobId = batchjobid;
+                _batchJobId = batchjobid;
             }
             if (!string.IsNullOrEmpty(ehendpoint))
             {
@@ -436,13 +500,45 @@ namespace StressLoadDemo.ViewModel
             //must be provided
             if (!(string.IsNullOrEmpty(_hubOwnerConnectionString) ||
               string.IsNullOrEmpty(_eventHubEndpoint)||
-              string.IsNullOrEmpty(_batchJobId)))
+              string.IsNullOrEmpty(_batchJobId))&& UseExistingJobId)
             {
                 CanStartMonitor = true;
             }
             else
             {
                 CanStartMonitor = false;
+            }
+        }
+
+        void TryGetBatchJobIds()
+        {
+            var result = new ObservableCollection<string>();
+            try
+            {
+                if (!string.IsNullOrEmpty(BatchServiceUrl) &&
+                    !string.IsNullOrEmpty(BatchAccountKey))
+                {
+                    var builder = new UriBuilder(BatchServiceUrl);
+                    var username = builder.Host.Split('.').First();
+
+                    BatchSharedKeyCredentials credentials = new BatchSharedKeyCredentials(BatchServiceUrl, username, BatchAccountKey);
+                    using (BatchClient batchClient = BatchClient.Open(credentials))
+                    {
+                        var jobs = batchClient.JobOperations.ListJobs();
+                        jobs.ForEachAsync(job =>
+                        {
+                            if(job.State!= JobState.Deleting)
+                            {
+                                result.Add(job.Id);
+                            }
+                        }).Wait();
+                        BatchJobIds = result;
+                    }
+                }
+            }
+            catch
+            {
+                //silently continue
             }
         }
 
@@ -453,7 +549,7 @@ namespace StressLoadDemo.ViewModel
                 string.IsNullOrEmpty(_batchAccountKey) ||
                 string.IsNullOrEmpty(_batchServiceUrl) ||
                 string.IsNullOrEmpty(_storageAccountConnectionString) ||
-                _dataProvider.MessagePerMinute == 0))
+                _dataProvider.MessagePerMinute == 0) && CreateNewJobId)
             {
                 CanStartCreate = true;
             }
