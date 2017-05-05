@@ -450,6 +450,7 @@ namespace StressLoadDemo.ViewModel
             MessageSeriesCollection[0].Values = new ChartValues<double>();
             DeviceSeriesCollection[0].Values = new ChartValues<double>();
             DeviceRealTimeNumber = 0; MessageRealTimeNumber = 0;
+            TaskTotalCount = 0; TaskCompleteCount = 0;
         }
 
         void ProcessMonitorConfig(IStressDataProvider provider)
