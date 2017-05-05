@@ -17,6 +17,8 @@ We need to use Azure Batch service to simulate the device (which need a storage 
 - Azure Batch Service URL and access key
 - Azure Storage Account connection string (needed for batch service)
 
+If you are familiar with Application Configuration files(app.config), you can fill in those values in config file, and they will be filled in automatically.
+
 #### 3.Create and start job in Batch Service
 
 When you have filled out all fields, the button "Start Stress Load Test" will be enabled.
@@ -24,6 +26,9 @@ Click to see the progress and status.
 
 If you see this , you can go ahead to the third tab to start monitoring stress test.
 - ![Tab1 Image](https://raw.githubusercontent.com/IoTChinaTeam/Azure-IoTHub-StressTest/YihuiWpf/ScreenShots/tab2_2.PNG)
+
+In addition,  you can start monitoring an existing batch job, by providing IoT Hub Credentials, Batch Credentials, and select an existing batch job id from the drop down list.
+- ![Tab1 Image](https://raw.githubusercontent.com/IoTChinaTeam/Azure-IoTHub-StressTest/YihuiWpf/ScreenShots/existing.PNG)
 
 #### 4.Monitor the test
 
