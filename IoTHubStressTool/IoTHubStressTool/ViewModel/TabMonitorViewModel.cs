@@ -15,11 +15,14 @@ using GalaSoft.MvvmLight.Command;
 using LiveCharts;
 using LiveCharts.Wpf;
 using System.Windows.Media;
+using StressLoadDemo.Helpers.Batch;
+using Microsoft.WindowsAzure.Storage;
 
 namespace StressLoadDemo.ViewModel
 {
     public class TabMonitorViewModel : ViewModelBase
     {
+        const string ContainerName = "stresstest";
         const string AzureCloudAllResourcesPage = "https://ms.portal.azure.com/#blade/HubsExtension/Resources/resourceType/Microsoft.Resources%2Fresources";
         const string AzureChinaCloudAllResourcesPage = "https://portal.azure.cn/#blade/HubsExtension/Resources/resourceType/Microsoft.Resources%2Fresources";
 
@@ -585,6 +588,39 @@ namespace StressLoadDemo.ViewModel
                 _hubDataReceiver.PauseReceive();
                 _refreshTaskTimer.Enabled = false;
                 _refreshDataTimer.Enabled = false;
+                CleanUpBatch();
+                CleanUpStorage();
+
+            }
+        }
+
+        async void CleanUpStorage()
+        {
+            try { 
+            var sa = CloudStorageAccount.Parse(_dataProvider.StorageAccountConectionString);
+            var cloudBlobClient = sa.CreateCloudBlobClient();
+            var containers = cloudBlobClient.ListContainers(ContainerName);
+
+            foreach (var c in containers)
+            {
+                await c.DeleteIfExistsAsync();
+            }
+            }
+            catch
+            {
+                //silently continue
+            }
+        }
+
+        async void CleanUpBatch()
+        {
+            var builder = new UriBuilder(_dataProvider.BatchUrl);
+            var username = builder.Host.Split('.').First();
+
+            BatchSharedKeyCredentials credentials = new BatchSharedKeyCredentials(_dataProvider.BatchUrl, username, _dataProvider.BatchKey);
+            using (BatchClient batchClient = BatchClient.Open(credentials))
+            {
+                await batchClient.JobOperations.DeleteJobAsync(BatchJobId);
             }
         }
 

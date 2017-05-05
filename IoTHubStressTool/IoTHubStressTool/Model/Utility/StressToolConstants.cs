@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace StressLoadDemo.Model.Utility
 {
-    public static class Constants
+    public static class StressToolConstants
     {
         public const string BatchKey_ConfigName = "Batchkey";
         public const string HubOwnerConectionString_ConfigName = "HubOwnerConnectionString";

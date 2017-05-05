@@ -51,6 +51,7 @@ namespace StressLoadDemo.Model.DataProvider
         public void StartReceive()
         {
             pause = false;
+            partitionNumber = 0;
             workThread = new Thread(() => FetchHubData());
             workThread.Start();
         }
@@ -88,9 +89,9 @@ namespace StressLoadDemo.Model.DataProvider
             }
             var partition = _eventHubClient.GetRuntimeInformation().PartitionCount;
             partitionNumber = partitionNumber == 0 ? partition : partitionNumber;
-
+            
             var consumerGroup = _eventHubClient.GetConsumerGroup(configSettings.GroupName);
-            var receiver = consumerGroup.CreateReceiver(configSettings.PartitionId, configSettings.StartingDateTimeUtc);
+            var receiver = SingletonReceiver.GetReceiver(consumerGroup,configSettings.PartitionId, configSettings.StartingDateTimeUtc);
             stopwatch = Stopwatch.StartNew();
             while (!pause)
             {
@@ -117,6 +118,7 @@ namespace StressLoadDemo.Model.DataProvider
                 }
                 runningTime = stopwatch.Elapsed;
             }
+            receiver.Close();
         }
 
         private string FormatDelay(double value)
