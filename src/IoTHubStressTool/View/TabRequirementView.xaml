@@ -34,7 +34,7 @@
         </GroupBox>
         <GroupBox x:Name="groupBox2" Header="IoT Hub Messaging Capability Reference" HorizontalAlignment="Left" Height="153" Margin="431,10,0,0" VerticalAlignment="Top" Width="422">
             <Grid>
-                <Label Content="[Unit Level]&#x9;[Throughput Per unit]&#xA;--------------&#x9;-------------------------&#xA;     S1&#x9;&#x9;≈278 message/min&#xA;     S2&#x9;&#x9;Up to 4166 message/min&#xA;     S3&#x9;&#x9;Up to 208333s message/min" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top" Height="110" Width="370"/>
+                <Label Content="[Unit Level]&#x9;[Throughput Per unit]&#xA;--------------&#x9;-------------------------&#xA;     S1&#x9;&#x9;≈278 message/min&#xA;     S2&#x9;&#x9;Up to 4166 messages/min&#xA;     S3&#x9;&#x9;Up to 208333 messages/min" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top" Height="110" Width="370"/>
                 <Button x:Name="button" Command="{Binding OpenHubLink}" Content="Capacity Link"  HorizontalAlignment="Left" Margin="326,5,-8,0" VerticalAlignment="Top" Width="92">
                     <Button.Template>
                         <ControlTemplate TargetType="Button">

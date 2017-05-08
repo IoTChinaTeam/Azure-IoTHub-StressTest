@@ -1,4 +1,13 @@
 ﻿using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
+using LiveCharts;
+using LiveCharts.Wpf;
+using Microsoft.Azure.Batch;
+using Microsoft.Azure.Batch.Auth;
+using Microsoft.Azure.Batch.Common;
+using Microsoft.WindowsAzure.Storage;
+using StressLoadDemo.Model.DataProvider;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -6,17 +15,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Timers;
 using System.Windows;
-using GalaSoft.MvvmLight.Messaging;
-using Microsoft.Azure.Batch;
-using Microsoft.Azure.Batch.Auth;
-using StressLoadDemo.Model.DataProvider;
-using Microsoft.Azure.Batch.Common;
-using GalaSoft.MvvmLight.Command;
-using LiveCharts;
-using LiveCharts.Wpf;
-using System.Windows.Media;
-using StressLoadDemo.Helpers.Batch;
-using Microsoft.WindowsAzure.Storage;
 
 namespace StressLoadDemo.ViewModel
 {
@@ -52,16 +50,8 @@ namespace StressLoadDemo.ViewModel
 
         public TabMonitorViewModel(IStressDataProvider provider)
         {
-            _consumerGroupName = "$Default";
-            _selectedPartition = "0";
-            _startTime = "0";
             _dataProvider = provider;
-            _shadeVisibility = Visibility.Hidden;
-            _partitions = new ObservableCollection<string>();
-            _messageContent = "N/A"; _fromDevice = "N/A";
-            TestRunTime = "N/A"; Throughput = "N/A";
-            DeviceToHubDelayAvg = "N/A"; DeviceToHubDelay1Min = "N/A";
-            _taskStatus = "N/A"; _localRunTime = "N/A";
+            InitBindingData();
             Messenger.Default.Register<IStressDataProvider>(
                this,
                "StartMonitor",
@@ -77,8 +67,7 @@ namespace StressLoadDemo.ViewModel
             //fetch task and refresh UI every 5 sec
             _refreshDataTimer.Interval = 1000;
             _refreshTaskTimer.Interval = 5000;
-            Reload = new RelayCommand(StartCollecting);
-            Labels = new List<string>();
+           
             InitChart();
         }
 
@@ -150,7 +139,7 @@ namespace StressLoadDemo.ViewModel
                 RaisePropertyChanged();
             }
         }
-        public string ElapsedTime
+        public string CurrentTimeString
         {
             get { return _elapasedTime; }
             set
@@ -395,9 +384,27 @@ namespace StressLoadDemo.ViewModel
 
         public SeriesCollection MessageSeriesCollection { get; set; }
         public List<string> Labels { get; set; }
+        public Queue<DateTime> TimeStamps { get; set; }
         public Func<double, string> YFormatter { get; set; }
 
+        public Func<DateTime,string> XFormatter { get; set; }
 
+        void InitBindingData()
+        {
+            _consumerGroupName = "$Default";
+            _selectedPartition = "0";
+            _startTime = "0";
+            _shadeVisibility = Visibility.Hidden;
+            _partitions = new ObservableCollection<string>();
+            _messageContent = "N/A"; _fromDevice = "N/A";
+            TestRunTime = "N/A"; Throughput = "N/A";
+            DeviceToHubDelayAvg = "N/A"; DeviceToHubDelay1Min = "N/A";
+            _taskStatus = "N/A"; _localRunTime = "N/A";
+            BatchJobId = string.Empty;
+            Reload = new RelayCommand(StartCollecting);
+            Labels = new List<string>();
+            TimeStamps = new Queue<DateTime>();
+        }
         void InitChart()
         {
             MessageSeriesCollection = new SeriesCollection
@@ -423,8 +430,6 @@ namespace StressLoadDemo.ViewModel
                 }
             };
             YFormatter = value => Math.Round(value).ToString();
-            
-
 
         }
 
@@ -456,6 +461,7 @@ namespace StressLoadDemo.ViewModel
 
         void ProcessMonitorConfig(IStressDataProvider provider)
         {
+            InitBindingData();
             _hubDataReceiver = new HubReceiver(provider);
             BatchJobId = provider.BatchJobId;
             _hubDataReceiver.StartReceive();
@@ -561,8 +567,8 @@ namespace StressLoadDemo.ViewModel
             HubThroughput = $"≈ {_hubDataReceiver.throughPut * Partitions.Count}  messages/minute";
             FromDevice = _hubDataReceiver.sampleEventSender;
             var allsec = (int)_hubDataReceiver.runningTime.TotalSeconds;
-            ElapsedTime = $"{allsec / 60} m {allsec % 60} s";
             var datetimestring = DateTime.Now.ToString("HH:mm:ss");
+            CurrentTimeString = datetimestring;
             TimeStamp = $"Details(updated at {datetimestring})";
             var elapsedstring = localwatch.Elapsed.ToString();
             if (!string.IsNullOrEmpty(localwatch.Elapsed.ToString()))
@@ -578,9 +584,26 @@ namespace StressLoadDemo.ViewModel
             }
 
             //Update chart
-            MessageSeriesCollection[0].Values.Add(_messageRealTimeNumber);
-            Labels.Add(ElapsedTime);
+            var currentTime = DateTime.Now;
+            TimeStamps.Enqueue(currentTime);
+            Labels.Add(currentTime.ToString("hh:mm:ss"));
             DeviceSeriesCollection[0].Values.Add(_deviceRealTimeNumber);
+            MessageSeriesCollection[0].Values.Add(_messageRealTimeNumber);
+            var earliestTime = currentTime;
+            if (TimeStamps.Count != 0)
+            {
+                earliestTime = TimeStamps.Peek();
+            }
+            //only collect recent 15min data.
+            var timeDiff = currentTime.Subtract(earliestTime);
+            if(timeDiff>new TimeSpan(0, 15, 1))
+            {
+                Labels.RemoveAt(0);
+                DeviceSeriesCollection[0].Values.RemoveAt(0);
+                MessageSeriesCollection[0].Values.RemoveAt(0);
+                TimeStamps.Dequeue();
+            }
+            
 
             //check job status and stop refreshing.
             if (TaskTotalCount == TaskCompleteCount && TaskTotalCount != 0)

@@ -463,10 +463,7 @@ namespace StressLoadDemo.ViewModel
             _dataProvider.HubOwnerConectionString = _hubOwnerConnectionString;
             _dataProvider.EventHubEndpoint = _eventHubEndpoint;
             _dataProvider.BatchUrl = _batchServiceUrl;
-            if (string.IsNullOrEmpty(_dataProvider.BatchJobId))
-            {
-                _dataProvider.BatchJobId = _batchJobId;
-            }
+            _dataProvider.BatchJobId = _batchJobId;
             Messenger.Default.Send<IStressDataProvider>(_dataProvider, "StartMonitor");
 
 

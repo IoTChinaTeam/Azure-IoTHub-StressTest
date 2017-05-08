@@ -17,7 +17,7 @@
         <ComboBox IsEnabled="{Binding ComboEnabled}" x:Name="comboBox" HorizontalAlignment="Left" Margin="637,21,0,0" VerticalAlignment="Top" Width="120" ItemsSource="{Binding Partitions}" SelectedIndex="{Binding SelectedPartition}">
         </ComboBox>
         <Label x:Name="label1" Content="IoT Hub Message(one partition)" Canvas.ZIndex="4" HorizontalAlignment="Left" Margin="546,70,0,0" VerticalAlignment="Top" FontSize="16" FontWeight="Bold"/>
-        <Label x:Name="label1_Copy" Content="IoT Hub Device Number (one partition)" Canvas.ZIndex="4" HorizontalAlignment="Left" Margin="37,70,0,0" VerticalAlignment="Top" FontSize="16" FontWeight="Bold"/>
+        <Label x:Name="label1_Copy" Content="Found Device Number(one partition)" Canvas.ZIndex="4" HorizontalAlignment="Left" Margin="37,70,0,0" VerticalAlignment="Top" FontSize="16" FontWeight="Bold"/>
         <Viewbox Margin="866,57,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Panel.ZIndex="4" Width="50">
             <Label x:Name="label2_Copy"  Content="{Binding MessageRealTimeNumber}" HorizontalAlignment="Left"  FontSize="16" Panel.ZIndex="4"/>
         </Viewbox>
@@ -44,8 +44,8 @@
 
             </Grid>
         </GroupBox>
-        <Label x:Name="label5" Content="{Binding ElapsedTime}" HorizontalAlignment="Left" Margin="389,328,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="label5_Copy" Content="{Binding ElapsedTime}" HorizontalAlignment="Left" Margin="866,328,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="label5" Content="{Binding CurrentTimeString}" HorizontalAlignment="Left" Margin="389,328,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="label5_Copy" Content="{Binding CurrentTimeString}" HorizontalAlignment="Left" Margin="866,328,0,0" VerticalAlignment="Top"/>
         <GroupBox x:Name="groupBox" Header="Batch" HorizontalAlignment="Left" Height="133" Margin="10,366,0,0" VerticalAlignment="Top" Width="445">
             <Grid>
                 <Label x:Name="label2" Content="Job Id" HorizontalAlignment="Left" Height="29" Margin="4,9,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
