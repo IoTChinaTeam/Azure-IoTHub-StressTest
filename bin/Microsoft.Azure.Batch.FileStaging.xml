@@ -1,0 +1,198 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.Azure.Batch.FileStaging</name>
+    </assembly>
+    <members>
+        <member name="T:Microsoft.Azure.Batch.FileStaging.ErrorMessages">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Batch.FileStaging.ErrorMessages.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Batch.FileStaging.ErrorMessages.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Batch.FileStaging.ErrorMessages.FileStagingIncorrectArtifact">
+            <summary>
+              Looks up a localized string similar to An incorrect artifact implementation class was provided..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Batch.FileStaging.ErrorMessages.FileStagingLocalFileNotFound">
+            <summary>
+              Looks up a localized string similar to The following local file cannot be staged because it cannot be found: {0}.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Batch.FileStaging.ErrorMessages.FileStagingOnlyASingleStorageAccount">
+            <summary>
+              Looks up a localized string similar to All files destined for the default blob container must use the same instance of StorageCredentials..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Batch.FileStaging.ErrorMessages.FileStagingPropertyCanBeSetOnlyOnce">
+            <summary>
+              Looks up a localized string similar to The following property has been set once and cannot be set again: {0}.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Azure.Batch.FileStaging.FileToStage">
+            <summary>
+            Provides for file staging of a local file to blob storage.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Batch.FileStaging.FileToStage.LocalFileToStage">
+            <summary>
+            The name of the local file to stage to blob storage
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Batch.FileStaging.FileToStage.NodeFileName">
+            <summary>
+            The target filename, on the compute node, to which the blob contents will be downloaded.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Batch.FileStaging.FileToStage.StagedFiles">
+            <summary>
+            The instances of ResourcesFile for the staged local file.
+            For this implementation, successful file staging of this object will
+            result in a collection with only one entry.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Batch.FileStaging.FileToStage.Exception">
+            <summary>
+            The exception, if any, caught while attempting to stage this file.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Azure.Batch.FileStaging.FileToStage.#ctor(System.String,Microsoft.Azure.Batch.FileStaging.StagingStorageAccount,System.String)">
+            <summary>
+            Specifies that a local file should be staged to blob storage.  
+            The specified account will be charged for storage costs.
+            </summary>
+            <param name="localFileToStage">The name of the local file.</param>
+            <param name="storageCredentials">The storage credentials to be used when creating the default container.</param>
+            <param name="nodeFileName">Optional name to be given to the file on the compute node.  If this parameter is null or missing 
+            the name on the compute node will be set to the value of localFileToStage stripped of all path information.</param>
+        </member>
+        <member name="M:Microsoft.Azure.Batch.FileStaging.FileToStage.StageFilesAsync(System.Collections.Generic.List{Microsoft.Azure.Batch.FileStaging.IFileStagingProvider},Microsoft.Azure.Batch.IFileStagingArtifact)">
+            <summary>
+            See <see cref="M:Microsoft.Azure.Batch.FileStaging.IFileStagingProvider.StageFilesAsync(System.Collections.Generic.List{Microsoft.Azure.Batch.FileStaging.IFileStagingProvider},Microsoft.Azure.Batch.IFileStagingArtifact)"/>.
+            </summary>
+            <param name="filesToStage">The instances of IFileStagingProvider to stage.</param>
+            <param name="fileStagingArtifact">IFileStagingProvider specific staging artifacts including error/progress.</param>
+            <returns>A <see cref="T:System.Threading.Tasks.Task"/> object that represents the asynchronous operation.</returns>
+        </member>
+        <member name="M:Microsoft.Azure.Batch.FileStaging.FileToStage.CreateStagingArtifact">
+            <summary>
+            See <see cref="M:Microsoft.Azure.Batch.FileStaging.IFileStagingProvider.CreateStagingArtifact"/>.
+            </summary>
+            <returns>An instance of IFileStagingArtifact with default values.</returns>
+        </member>
+        <member name="M:Microsoft.Azure.Batch.FileStaging.FileToStage.Validate">
+            <summary>
+            See <see cref="M:Microsoft.Azure.Batch.FileStaging.IFileStagingProvider.Validate"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Azure.Batch.FileStaging.FileToStage.ConstructBlobSource(System.String,System.String)">
+            <summary>
+            combine container and blob into an URL.
+            </summary>
+            <param name="container">container url</param>
+            <param name="blob">blob url</param>
+            <returns>full url</returns>
+        </member>
+        <member name="M:Microsoft.Azure.Batch.FileStaging.FileToStage.CreateContainerWithPolicySASIfNotExist(System.String,System.String,System.Uri,System.String,System.String,System.DateTime,System.DateTime,Microsoft.WindowsAzure.Storage.Blob.SharedAccessBlobPermissions)">
+            <summary>
+            create a container if doesn't exist, setting permission with policy, and return assosciated SAS signature
+            </summary>
+            <param name="account">storage account</param>
+            <param name="key">storage key</param>
+            <param name="container">container to be created</param>
+            <param name="policy">name for the policy</param>
+            <param name="start">start time of the policy</param>
+            <param name="end">expire time of the policy</param>
+            <param name="permissions">permission on the name</param>
+            <param name="blobUri">blob URI</param>
+            <returns>the SAS for the container, in full URI format.</returns>
+        </member>
+        <member name="M:Microsoft.Azure.Batch.FileStaging.FileToStage.FindAtLeastOne(System.Collections.Generic.List{Microsoft.Azure.Batch.FileStaging.IFileStagingProvider})">
+            <summary>
+            Since this is the SequentialFileStagingProvider, all files are supposed to be of this type.
+            Find any one and return the implementation instance.
+            </summary>
+            <param name="filesToStage"></param>
+            <returns>Null means there was not even one.</returns>
+        </member>
+        <member name="M:Microsoft.Azure.Batch.FileStaging.FileToStage.StageFilesInternalAsync(System.Collections.Generic.List{Microsoft.Azure.Batch.FileStaging.IFileStagingProvider},Microsoft.Azure.Batch.IFileStagingArtifact)">
+            <summary>
+            Starts an asynchronous call to stage the given files.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Azure.Batch.FileStaging.FileToStage.StageFilesAsync(System.Collections.Generic.List{Microsoft.Azure.Batch.FileStaging.IFileStagingProvider},Microsoft.Azure.Batch.FileStaging.SequentialFileStagingArtifact)">
+            <summary>
+            Stages all files in the queue 
+            </summary>
+        </member>
+        <member name="M:Microsoft.Azure.Batch.FileStaging.FileToStage.StageOneFileAsync(Microsoft.Azure.Batch.FileStaging.FileToStage,Microsoft.Azure.Batch.FileStaging.SequentialFileStagingArtifact)">
+            <summary>
+            Stage a single file.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Azure.Batch.FileStaging.SequentialFileStagingArtifact">
+            <summary>
+            The file staging artifact payload for this file staging provider
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Batch.FileStaging.SequentialFileStagingArtifact.BlobContainerCreated">
+            <summary>
+            The name of any blob container created.  
+            
+            A blob container is created if there is at least one file 
+            to be uploaded that does not have an explicit container specified.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Batch.FileStaging.SequentialFileStagingArtifact.NamingFragment">
+            <summary>
+            Optionally set by caller.  Optionally used by implementation. A name fragment that can be used when constructing default names.
+            
+            Can only be set once.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Batch.FileStaging.SequentialFileStagingArtifact.DefaultContainerSAS">
+            <summary>
+            Holds the SAS for the default container after it is created.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Azure.Batch.FileStaging.StagingStorageAccount">
+            <summary>
+            Holds storage account information.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Batch.FileStaging.StagingStorageAccount.StorageAccount">
+            <summary>
+            Specifies the storage account to be used.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Batch.FileStaging.StagingStorageAccount.StorageAccountKey">
+            <summary>
+            Specifies the storage account key to be used.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Batch.FileStaging.StagingStorageAccount.BlobEndpoint">
+            <summary>
+            The serviced endpoint for blob storage.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Azure.Batch.FileStaging.StagingStorageAccount.#ctor(System.String,System.String,System.String)">
+            <summary>
+            Initializes a new instance of the StagingStorageAccount class using the specified credentials and service endpoint.
+            </summary>
+            <param name="storageAccount">A string specifying the storage account to be used.</param>
+            <param name="storageAccountKey">A string specifying the storage account key to be used.</param>
+            <param name="blobEndpoint">A string specifying the primary Blob service endpoint.</param>
+        </member>
+    </members>
+</doc>
