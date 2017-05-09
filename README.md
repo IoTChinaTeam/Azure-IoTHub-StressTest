@@ -19,6 +19,11 @@ We need to use Azure Batch service to simulate the device (which need a storage 
 
 If you are familiar with Application Configuration files(app.config), you can fill in those values in config file, and they will be filled in automatically.
 
+Note that you can change the partition number to have higher performance. The more partitions you have, the higher the performance will be.
+Partition number can be specified when creating an  IoT Hub, like this:
+
+- ![Tab1 Image](https://raw.githubusercontent.com/IoTChinaTeam/Azure-IoTHub-StressTest/master/doc/images/partition.PNG)
+
 #### 3.Create and start job in Batch Service
 
 When you have filled out all fields, the button "Start Stress Load Test" will be enabled.
