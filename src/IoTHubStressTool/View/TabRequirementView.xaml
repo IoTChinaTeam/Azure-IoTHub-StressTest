@@ -28,14 +28,53 @@
                 <Label Content="{Binding VmSkuRecommendation}" HorizontalAlignment="Left" Margin="279,109,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
                 <Label Content="Expected Message/Minute " HorizontalAlignment="Left" Margin="0,20,0,0" VerticalAlignment="Top"/>
                 <Label Content="Expected Total Device Number  " HorizontalAlignment="Left" Margin="0,83,0,0" VerticalAlignment="Top"/>
-                <Label Content="Recommended Size and Unit Number" HorizontalAlignment="Left" Margin="0,108,0,0" VerticalAlignment="Top"/>
-                <Label Content="Recommended VM Core Number" HorizontalAlignment="Left" Margin="0,46,0,0" VerticalAlignment="Top"/>
+                <Label Content="Recommended IoT Hub Size" HorizontalAlignment="Left" Margin="0,46,0,0" VerticalAlignment="Top"/>
+                <Label Content="Recommended VM Core " HorizontalAlignment="Left" Margin="0,109,0,0" VerticalAlignment="Top"/>
+                <Button x:Name="button_Copy" Command="{Binding OpenPriceLinkChina}" Content="Price(China)" HorizontalAlignment="Left" Margin="59,148,0,0" VerticalAlignment="Top" Width="94">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <TextBlock TextDecorations="Underline">
+                <ContentPresenter />
+                            </TextBlock>
+                        </ControlTemplate>
+                    </Button.Template>
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Foreground" Value="Blue" />
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="true">
+                                    <Setter Property="Foreground" Value="Red" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+                <Button x:Name="button1_Copy" Command="{Binding OpenPriceLinkGlobal}" Content="Price(Global)" HorizontalAlignment="Left" Margin="231,148,0,0" VerticalAlignment="Top" Width="94">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <TextBlock TextDecorations="Underline">
+                <ContentPresenter />
+                            </TextBlock>
+                        </ControlTemplate>
+                    </Button.Template>
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Foreground" Value="Blue" />
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="true">
+                                    <Setter Property="Foreground" Value="Red" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+
             </Grid>
         </GroupBox>
         <GroupBox x:Name="groupBox2" Header="IoT Hub Messaging Capability Reference" HorizontalAlignment="Left" Height="153" Margin="431,10,0,0" VerticalAlignment="Top" Width="422">
             <Grid>
-                <Label Content="[Unit Level]&#x9;[Throughput Per unit]&#xA;--------------&#x9;-------------------------&#xA;     S1&#x9;&#x9;≈278 message/min&#xA;     S2&#x9;&#x9;Up to 4166 messages/min&#xA;     S3&#x9;&#x9;Up to 208333 messages/min" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top" Height="110" Width="370"/>
-                <Button x:Name="button" Command="{Binding OpenHubLink}" Content="Capacity Link"  HorizontalAlignment="Left" Margin="326,5,-8,0" VerticalAlignment="Top" Width="92">
+                <Label Content="[Unit Level]&#x9;[Throughput Per unit]&#xA;--------------&#x9;-------------------------&#xA;     S1&#x9;&#x9;≈278 message/min&#xA;     S2&#x9;&#x9;Up to 4166 messages/min&#xA;     S3&#x9;&#x9;Up to 208333 messages/min" HorizontalAlignment="Left" Margin="10,7,0,0" VerticalAlignment="Top" Height="110" Width="370"/>
+                <Button x:Name="button" Command="{Binding OpenHubLink}" Content="Capacity"  HorizontalAlignment="Left" Margin="326,13,-8,0" VerticalAlignment="Top" Width="92">
                     <Button.Template>
                         <ControlTemplate TargetType="Button">
                             <TextBlock TextDecorations="Underline">
@@ -54,45 +93,7 @@
                         </Style>
                     </Button.Style>
                 </Button>
-                <Button x:Name="button_Copy" Command="{Binding OpenPriceLinkChina}" Content="Price(China)" HorizontalAlignment="Left" Margin="33,105,0,0" VerticalAlignment="Top" Width="94">
-                    <Button.Template>
-                        <ControlTemplate TargetType="Button">
-                            <TextBlock TextDecorations="Underline">
-                <ContentPresenter />
-                            </TextBlock>
-                        </ControlTemplate>
-                    </Button.Template>
-                    <Button.Style>
-                        <Style TargetType="Button">
-                            <Setter Property="Foreground" Value="Blue" />
-                            <Style.Triggers>
-                                <Trigger Property="IsMouseOver" Value="true">
-                                    <Setter Property="Foreground" Value="Red" />
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Button.Style>
-                </Button>
-                <Button x:Name="button1_Copy" Command="{Binding OpenPriceLinkGlobal}" Content="Price(Global)" HorizontalAlignment="Left" Margin="231,105,0,0" VerticalAlignment="Top" Width="94">
-                    <Button.Template>
-                        <ControlTemplate TargetType="Button">
-                            <TextBlock TextDecorations="Underline">
-                <ContentPresenter />
-                            </TextBlock>
-                        </ControlTemplate>
-                    </Button.Template>
-                    <Button.Style>
-                        <Style TargetType="Button">
-                            <Setter Property="Foreground" Value="Blue" />
-                            <Style.Triggers>
-                                <Trigger Property="IsMouseOver" Value="true">
-                                    <Setter Property="Foreground" Value="Red" />
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Button.Style>
-                </Button>
-                <Label x:Name="label" Content="Based on" HorizontalAlignment="Left" Margin="261,0,0,0" VerticalAlignment="Top"/>
+                <Label x:Name="label" Content="Based on" HorizontalAlignment="Left" Margin="261,8,0,0" VerticalAlignment="Top"/>
 
             </Grid>
         </GroupBox>

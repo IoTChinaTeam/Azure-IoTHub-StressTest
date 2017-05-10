@@ -459,7 +459,7 @@ namespace StressLoadDemo.ViewModel
             _dataProvider.BatchUrl = _batchServiceUrl;
             _dataProvider.BatchJobId = _batchJobId;
             Messenger.Default.Send<IStressDataProvider>(_dataProvider, "StartMonitor");
-
+            new ViewModelLocator().Main.SelectedTabIndex = 2;
 
         }
 

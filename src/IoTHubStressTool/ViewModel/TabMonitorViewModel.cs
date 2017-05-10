@@ -54,7 +54,7 @@ namespace StressLoadDemo.ViewModel
         public TabMonitorViewModel(IStressDataProvider provider)
         {
             _dataProvider = provider;
-            _consumerGroupName = _consumerGroupName = ConfigurationHelper.ReadConfig(StressToolConstants.ConsumerGroup_ConfigName, "$Default");
+            _consumerGroupName  = ConfigurationHelper.ReadConfig(StressToolConstants.ConsumerGroup_ConfigName, "$Default");
             InitBindingData();
             Messenger.Default.Register<IStressDataProvider>(
                this,

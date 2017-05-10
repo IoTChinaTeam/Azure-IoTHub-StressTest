@@ -11,13 +11,16 @@ namespace StressLoadDemo.Helpers.Configuration
     {
         public static string ReadConfig(string configName, string defaultValue = "")
         {
-            try
-            {
-                return ConfigurationManager.AppSettings[configName];
-            }
-            catch
+            //if the config with configName is not in app.config. no exception will be thrown, only return null.
+
+            var configValue = ConfigurationManager.AppSettings[configName];
+            if (string.IsNullOrEmpty(configValue))
             {
                 return defaultValue;
+            }
+            else
+            {
+                return configValue;
             }
         }
     }

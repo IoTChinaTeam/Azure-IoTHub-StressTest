@@ -41,7 +41,7 @@
         <Label Content="Upload Binary" Visibility="{Binding AssemblyLableVisibility}" Background="DarkGray" HorizontalAlignment="Left" Height="32" Margin="456,460,0,0" VerticalAlignment="Top"/>
         <Label Content="Create Job" Visibility="{Binding JobLableVisibility}" Background="DarkGray" HorizontalAlignment="Left" Height="32" Margin="675,460,0,0" VerticalAlignment="Top"/>
         <Label Content="Start Jobs" Visibility="{Binding FinishLableVisibility}" Background="DarkGray" HorizontalAlignment="Left" Height="32" Margin="879,460,0,0" VerticalAlignment="Top"/>
-        <GroupBox x:Name="groupBox" Header="Input Spec Review" HorizontalAlignment="Left" Height="76" Margin="10,10,0,0" VerticalAlignment="Top" Width="930">
+        <GroupBox x:Name="groupBox" Header="Target" HorizontalAlignment="Left" Height="76" Margin="10,10,0,0" VerticalAlignment="Top" Width="930">
             <Grid>
                 <Label x:Name="label_Copy" Content="{Binding SpecDeviceCount}" HorizontalAlignment="Left" Margin="36,15,0,0" VerticalAlignment="Top" FontSize="14" FontStyle="Italic"/>
                 <Label x:Name="label_Copy1" Content="{Binding SpecMsgFreq}" HorizontalAlignment="Left" Margin="320,15,0,0" VerticalAlignment="Top" FontSize="14" FontStyle="Italic"/>

@@ -10,7 +10,7 @@
         >
     <Grid Height="Auto">
         <TabControl x:Name="TabControl" SelectedIndex="{Binding SelectedTabIndex}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
-            <TabItem Header="TestSpec" >
+            <TabItem Header="Target" >
                 <view:TabRequirementView/>
             </TabItem>
             <TabItem Header="Resource">

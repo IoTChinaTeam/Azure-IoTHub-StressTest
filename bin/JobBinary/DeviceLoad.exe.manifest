@@ -42,14 +42,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="DeviceLoad.exe" size="19968">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="DeviceLoad.exe" size="20992">
       <assemblyIdentity name="DeviceLoad" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>4ewsJ1nJTSvTLkrJXVyxD7HX4Dnh4KWH160/7isgJCA=</dsig:DigestValue>
+        <dsig:DigestValue>0qvA4pML4elBqCZd1hlIDtio2KUaw5MzR7tobo33RqI=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
