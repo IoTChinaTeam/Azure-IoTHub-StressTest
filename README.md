@@ -1,62 +1,54 @@
 # Azure-IoTHub-StressTest
-Azure IoT Hub Stress test tool using azure batch service
+A GUI tool to simulate millions of IoT devices to test the capability of the Azure IoT Hub. The simulated devices are running in Azure Batch service.
 
-## IoTHubStressTool
-A GUI tool to simulate millions of IoT devices to test the capability of the Azure IoT Hub.
+## User Guidance
 
-### User Guidance
-
-#### 1. Set expectations for stress test
+### 1. Set expectations for stress test
 This tab helps to convert from expections, such as total device count, message rate, to the azure resources we need to run this test. 
 
 - ![Tab1 Image](https://raw.githubusercontent.com/IoTChinaTeam/Azure-IoTHub-StressTest/master/doc/images/tab1.PNG)
-#### 2. Provision or assign Azure resources
-We need to use Azure Batch service to simulate the device (which need a storage account too) and azure IoT Hub to handle the devices.
+### 2.1 Provision Azure resources
+Here is the list of azure resources and credentials we need to run the test:
 
-- IoT Hub owner connection string and Event Hub endpoint of the same IoT Hub
-- Azure Batch Service URL and access key
-- Azure Storage Account connection string (needed for batch service)
+- Azure IoT Hub: owner connection string and Event Hub endpoint
+- Azure Batch: service URL and access key
+- Azure Storage Account: connection string (needed for batch service)
 
-If you are familiar with Application Configuration files(app.config), you can fill in those values in config file, and they will be filled in automatically.
+Hint:
+- You can also put credentials into app.config.
+- You should create more partitions for the IoT Hub. It will give better monitor performance. 
 
-Note that you can change the partition number to have higher performance. The more partitions you have, the higher the performance will be.
-Partition number can be specified when creating an  IoT Hub, like this:
+### 3. Start running test
 
-- ![Tab1 Image](https://raw.githubusercontent.com/IoTChinaTeam/Azure-IoTHub-StressTest/master/doc/images/partition.PNG)
-
-#### 3.Create and start job in Batch Service
-
-When you have filled out all fields, the button "Start Stress Load Test" will be enabled.
-Click to see the progress and status.
+After you filled out all fields, the button "Start Stress Load Test" will be enabled. Click to see the progress and status.
 
 If you see this , you can go ahead to the third tab to start monitoring stress test.
 - ![Tab1 Image](https://raw.githubusercontent.com/IoTChinaTeam/Azure-IoTHub-StressTest/master/doc/images/tab2_2.PNG)
 
-In addition,  you can start monitoring an existing batch job, by providing IoT Hub Credentials, Batch Credentials, and select an existing batch job id from the drop down list.
+Hint:
+- If the test is already running, you can monitor it by choosing an existing batch job from the drop down list.
 - ![Tab1 Image](https://raw.githubusercontent.com/IoTChinaTeam/Azure-IoTHub-StressTest/master/doc/images/existing.PNG)
 
-#### 4.Monitor the test
+### 4.Monitor the test
 
-Note that , depending on the number of device, you have to wait for a while to see the data and graph.
+We will start to pull message for a given partition to measure the performance. It may take a while for the connection to be established. 
+
 Here is what the monitoring screen looks like
 - ![Tab1 Image](https://raw.githubusercontent.com/IoTChinaTeam/Azure-IoTHub-StressTest/master/doc/images/tab3.PNG)
 
-The graph and the data will stop refreshing once the job is finished on Batch Service, and a full view of the entire curve will be displayed.
-- ![Tab1 Image](https://raw.githubusercontent.com/IoTChinaTeam/Azure-IoTHub-StressTest/master/doc/images/finish.PNG)
-
-#### 5.Monitor Values
-
+Test result section:
 - Batch
   - Job Id: This is the job id on Azure Batch Service. You can use it to find the job on Azure Portal.
   - Task Status: A job consists of several tasks. This field indicates the status of all tasks that belongs to the job.
-  - Job running time: This is the duration since job creation time till now, and shows how long the test has been running on cloud.
+  - Job running time: It shows how long the test job has been running on cloud.
 
 - Last Fetched Message
-  - Content: This is the latest message fetched by the tool from Event Hub.
-  - From Device: Indicates which device the latest received message is from.
-
+  - From Device: Indicates the device from which we received the latest message.
+  - Content: This is the latest message fetched from IoT Hub.
+  
 - Details
-  - Monitor running time:The duration since local monitoring thread becomes enabled till now.
-  - Device-To-Hub Delay (average): The average time used for a device message to reach IoT Hub (calculated from <b>all data</b>).
-  - Device-To-Hub Delay (last minute): The average time used for a device message to reach IoT Hub (calculated from <b>last one minute data</b>).
+  - Monitor running time: How long since local monitoring thread started.
+  - Device-To-Hub Delay (average): The average time used for a message to reach IoT Hub (calculated from <b>all received messages</b>).
+  - Device-To-Hub Delay (last minute): The average time used for a message to reach IoT Hub (calculated from <b>last one minute messages</b>).
   - Throughput for partition (last minute): The number of messages fetched <b>by monitoring thread</b>.
+  - Throughput for IoT Hub (last minute): Estimated total throughput.
