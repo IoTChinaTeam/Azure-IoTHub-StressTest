@@ -7,8 +7,8 @@
     <ProjectGuid>{2C2C1F6F-2062-4745-BC7E-4EBE1B5B1EEC}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>StressLoadDemo</RootNamespace>
-    <AssemblyName>StressLoadDemo</AssemblyName>
+    <RootNamespace>IoTHubStressTool</RootNamespace>
+    <AssemblyName>IoTHubStressTool</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -325,7 +325,9 @@
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Resource\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>if not exist "$(TargetDir)\JobBinary" mkdir "$(TargetDir)\JobBinary"
