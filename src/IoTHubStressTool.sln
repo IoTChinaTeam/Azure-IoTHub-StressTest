@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IoTHubStressTool", "IoTHubS
 		{38490692-34C8-4C80-9981-30A7A09310A8} = {38490692-34C8-4C80-9981-30A7A09310A8}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IoTHubStressToolTests", "IoTHubStressToolTests\IoTHubStressToolTests.csproj", "{6F71EEDA-4B54-46B2-AE8E-715DA79B1FF0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,6 +26,10 @@ Global
 		{2C2C1F6F-2062-4745-BC7E-4EBE1B5B1EEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2C2C1F6F-2062-4745-BC7E-4EBE1B5B1EEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2C2C1F6F-2062-4745-BC7E-4EBE1B5B1EEC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F71EEDA-4B54-46B2-AE8E-715DA79B1FF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F71EEDA-4B54-46B2-AE8E-715DA79B1FF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F71EEDA-4B54-46B2-AE8E-715DA79B1FF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F71EEDA-4B54-46B2-AE8E-715DA79B1FF0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

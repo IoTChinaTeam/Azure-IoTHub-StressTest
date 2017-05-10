@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Threading;
 using StressLoadDemo.Helpers.Configuration;
+using StressLoadDemo.Model.DataProvider;
 
-namespace StressLoadDemo.Model.DataProvider
+namespace IoTHubStressToolTests.Model.DataProvider
 {
     public class StressLoadDebugDataProvider:IStressDataProvider
     {
@@ -17,6 +18,8 @@ namespace StressLoadDemo.Model.DataProvider
         public int MessagePerMinute { get; set; }
         public string VmSize { get; set; }
         public string BatchJobId { get; set; }
+        public string ConsumerGroupName { get; set; }
+
 
         private double _deviceNumber,_messageNumber;
         private Thread _hubDeviceThread, _hubMsgThread;

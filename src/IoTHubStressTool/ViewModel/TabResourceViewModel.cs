@@ -15,12 +15,6 @@ using System.Windows;
 
 namespace StressLoadDemo.ViewModel
 {
-    /// <summary>
-    /// This class contains properties that a View can data bind to.
-    /// <para>
-    /// See http://www.galasoft.ch/mvvm
-    /// </para>
-    /// </summary>
     public class TabResourceViewModel : ViewModelBase
     {
         private readonly IStressDataProvider _dataProvider;
@@ -488,7 +482,7 @@ namespace StressLoadDemo.ViewModel
 
         void AppendBatchJobId(string batchJobId)
         {
-            _dataProvider.BatchJobId = batchJobId;
+            _batchJobId = batchJobId;
         }
 
         void TryActivateMonitorButton()

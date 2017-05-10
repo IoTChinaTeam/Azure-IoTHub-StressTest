@@ -21,7 +21,7 @@ namespace StressLoadDemo.Model.DataProvider
         public int MessagePerMinute { get; set; }
         public string BatchJobId { get; set; }
         public string VmSize { get; set; }
-
+        public string ConsumerGroupName { get; set; }
         public StressLoadDataProvider()
         {
             //register messenger to know where we are during deployment

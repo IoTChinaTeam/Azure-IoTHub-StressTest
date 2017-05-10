@@ -16,7 +16,7 @@ namespace StressLoadDemo.Model.DataProvider
         string ExpectTestDuration { get; set; }
         int MessagePerMinute { get; set; }
         string VmSize { get; set; }
-        
+        string ConsumerGroupName { get; set; }
         void Run(IConfigurationProvider provider = null);
     }
 }

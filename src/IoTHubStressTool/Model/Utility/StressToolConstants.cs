@@ -17,5 +17,6 @@ namespace StressLoadDemo.Model.Utility
         public const string MessageFreq_ConfigName = "MessagePerMinPerDevice";
         public const string ExpectDuration_ConfigName = "ExpectDuration";
         public const string BatchJobId_ConfigName = "BatchJobId";
+        public const string ConsumerGroup_ConfigName = "ConsumerGroupName";
     }
 }

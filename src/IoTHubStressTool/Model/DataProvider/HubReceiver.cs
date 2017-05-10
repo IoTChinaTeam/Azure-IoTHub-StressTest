@@ -1,7 +1,9 @@
 ﻿using GalaSoft.MvvmLight.Messaging;
 using Microsoft.Azure.Devices;
 using Microsoft.ServiceBus.Messaging;
+using StressLoadDemo.Helpers.Configuration;
 using StressLoadDemo.Model.DataProvider.ReceiverTool;
+using StressLoadDemo.Model.Utility;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -9,9 +11,9 @@ using System.Threading;
 
 namespace StressLoadDemo.Model.DataProvider
 {
-    public class HubReceiver
+    class HubReceiver
     {
-        static Settings configSettings;
+        Settings configSettings;
         private Thread workThread;
         delegate void DoWork();
 
@@ -19,14 +21,14 @@ namespace StressLoadDemo.Model.DataProvider
         public int partitionNumber;
         public DateTime currentDate;
         public TimeSpan runningTime;
-        public int throughPut;
+        public int throughput;
         public string  deviceToHubDelayAvg, deviceToHubDelayOneMin;
         public string e2EDelay;
         public string sampleContent;
         public string sampleEventSender;
         public bool pause;
         Stopwatch stopwatch;
-        static EventHubClient _eventHubClient;
+        EventHubClient _eventHubClient;
 
         public HubReceiver(IStressDataProvider provider)
         {
@@ -37,7 +39,7 @@ namespace StressLoadDemo.Model.DataProvider
                 configSettings.ConnectionString = $"Endpoint={provider.EventHubEndpoint};SharedAccessKeyName={builder.SharedAccessKeyName};SharedAccessKey={builder.SharedAccessKey}";
                 configSettings.Path = builder.HostName.Split('.').First();
                 configSettings.PartitionId = "0";
-                configSettings.GroupName = "$Default";
+                //"$Default";
                 configSettings.StartingDateTimeUtc = DateTime.UtcNow - TimeSpan.FromMinutes(2);
                 pause = false;
                 workThread = new Thread(() => FetchHubData());
@@ -62,7 +64,7 @@ namespace StressLoadDemo.Model.DataProvider
             totalDevice = 0;totalMessage = 0;
             deviceToHubDelayAvg = "N/A"; e2EDelay = "N/A";
             sampleContent = "N/A";sampleEventSender = "N/A";
-            throughPut = 0;
+            throughput = 0;
 
         }
 
@@ -73,20 +75,15 @@ namespace StressLoadDemo.Model.DataProvider
 
         public void SetConsumerGroup(string targetConsumerGroupName)
         {
-            configSettings.PartitionId = targetConsumerGroupName;
+            configSettings.GroupName = targetConsumerGroupName;
         }
 
         private void FetchHubData()
         {
             var indicators = new Indicators();
             indicators.Reset();
-
-            var cts = new CancellationTokenSource();
-            if (_eventHubClient == null)
-            {
-                Messenger.Default.Send($"Opening '{configSettings.Path}', partition {configSettings.PartitionId}, consumer group '{configSettings.GroupName}', StartingDateTimeUtc = {configSettings.StartingDateTimeUtc}", "MonitorLog");
-                _eventHubClient = EventHubClient.CreateFromConnectionString(configSettings.ConnectionString, configSettings.Path);
-            }
+            Messenger.Default.Send($"Opening '{configSettings.Path}', partition {configSettings.PartitionId}, consumer group '{configSettings.GroupName}', StartingDateTimeUtc = {configSettings.StartingDateTimeUtc}", "MonitorLog");
+            _eventHubClient = EventHubClient.CreateFromConnectionString(configSettings.ConnectionString, configSettings.Path);
             var partition = _eventHubClient.GetRuntimeInformation().PartitionCount;
             partitionNumber = partitionNumber == 0 ? partition : partitionNumber;
             
@@ -104,7 +101,7 @@ namespace StressLoadDemo.Model.DataProvider
                         totalDevice = indicators.TotalDevices;
                         totalMessage = indicators.TotalMessages;
                         currentDate = DateTime.Now;
-                        throughPut = indicators.DeviceToIoTHubDelay.Count;
+                        throughput = indicators.DeviceToIoTHubDelay.Count;
                         deviceToHubDelayAvg = FormatDelay(indicators.DeviceToIoTHubDelay.StreamAvg);
                         deviceToHubDelayOneMin = FormatDelay(indicators.DeviceToIoTHubDelay.WindowAvg);
                         e2EDelay = FormatDelay(indicators.E2EDelay.StreamAvg);

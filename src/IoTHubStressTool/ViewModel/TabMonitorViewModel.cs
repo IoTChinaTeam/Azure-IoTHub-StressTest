@@ -7,7 +7,9 @@ using Microsoft.Azure.Batch;
 using Microsoft.Azure.Batch.Auth;
 using Microsoft.Azure.Batch.Common;
 using Microsoft.WindowsAzure.Storage;
+using StressLoadDemo.Helpers.Configuration;
 using StressLoadDemo.Model.DataProvider;
+using StressLoadDemo.Model.Utility;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -47,10 +49,12 @@ namespace StressLoadDemo.ViewModel
         private int _taskActiveCount, _taskRunningCount, _taskCompletedCount, _taskTotalCount;
         private string _messageContent, _fromDevice, _taskStatus;
         private string _batchJobId, _elapasedTime, _startTime, _testRunTime, _throughput, _d2hAvg, _d2h1Min, _hubthroughput, _partitioncount;
+        private bool _deleteFlag;
 
         public TabMonitorViewModel(IStressDataProvider provider)
         {
             _dataProvider = provider;
+            _consumerGroupName = ConfigurationHelper.ReadConfig(StressToolConstants.ConsumerGroup_ConfigName);
             InitBindingData();
             Messenger.Default.Register<IStressDataProvider>(
                this,
@@ -391,7 +395,6 @@ namespace StressLoadDemo.ViewModel
 
         void InitBindingData()
         {
-            _consumerGroupName = "$Default";
             _selectedPartition = "0";
             _startTime = "0";
             _shadeVisibility = Visibility.Hidden;
@@ -404,6 +407,7 @@ namespace StressLoadDemo.ViewModel
             Reload = new RelayCommand(StartCollecting);
             Labels = new List<string>();
             TimeStamps = new Queue<DateTime>();
+            _deleteFlag = false;
         }
         void InitChart()
         {
@@ -463,6 +467,7 @@ namespace StressLoadDemo.ViewModel
         {
             InitBindingData();
             _hubDataReceiver = new HubReceiver(provider);
+            _hubDataReceiver.SetConsumerGroup(_consumerGroupName);
             BatchJobId = provider.BatchJobId;
             _hubDataReceiver.StartReceive();
             localwatch = Stopwatch.StartNew();
@@ -494,7 +499,7 @@ namespace StressLoadDemo.ViewModel
             BatchSharedKeyCredentials credentials = new BatchSharedKeyCredentials(_dataProvider.BatchUrl, BatchAccountName, _dataProvider.BatchKey);
             using (BatchClient batchClient = BatchClient.Open(credentials))
             {
-                var job = batchClient.JobOperations.GetJob(_dataProvider.BatchJobId);
+                var job = batchClient.JobOperations.GetJob(BatchJobId);
                 var list = job.ListTasks();
                 var runningtime = (DateTime.UtcNow - job.CreationTime).ToString();
                 if (!string.IsNullOrEmpty(runningtime))
@@ -563,8 +568,8 @@ namespace StressLoadDemo.ViewModel
                 }
             }
             MessageContent = _hubDataReceiver.sampleContent;
-            Throughput = (_hubDataReceiver.throughPut).ToString() + " messages/minute";
-            HubThroughput = $"≈ {_hubDataReceiver.throughPut * Partitions.Count}  messages/minute";
+            Throughput = (_hubDataReceiver.throughput).ToString() + " messages/minute";
+            HubThroughput = $"≈ {_hubDataReceiver.throughput * Partitions.Count}  messages/minute";
             FromDevice = _hubDataReceiver.sampleEventSender;
             var allsec = (int)_hubDataReceiver.runningTime.TotalSeconds;
             var datetimestring = DateTime.Now.ToString("HH:mm:ss");
@@ -613,8 +618,13 @@ namespace StressLoadDemo.ViewModel
                 _hubDataReceiver.PauseReceive();
                 _refreshTaskTimer.Enabled = false;
                 _refreshDataTimer.Enabled = false;
-                CleanUpBatch();
-                CleanUpStorage();
+                if (!_deleteFlag)
+                {//avoid "Conflict"
+                    CleanUpBatch();
+                    CleanUpStorage();
+                    _deleteFlag = true;
+                }
+
 
             }
         }
