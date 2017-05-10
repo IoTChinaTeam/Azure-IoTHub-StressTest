@@ -36,7 +36,7 @@ namespace StressLoadDemo.Model.DataProvider
             provider.PutConfigValue("SizeOfVM", VmSize);
             provider.PutConfigValue("MessagePerMin", MessagePerMinute.ToString());
             provider.PutConfigValue("DurationInMin", ExpectTestDuration);
-            provider.PutConfigValue("DeviceIdPrefix", "TestDevice");
+            provider.PutConfigValue("DeviceIdPrefix", "IoTHubStress");
             provider.PutConfigValue("Message", "");
             provider.PutConfigValue("BatchServiceUrl", BatchUrl);
             provider.PutConfigValue("BatchAccountKey", BatchKey);

@@ -9,7 +9,7 @@ namespace StressLoadDemo.Helpers.Configuration
 {
     public static class ConfigurationHelper
     {
-        public static string ReadConfig(string configName)
+        public static string ReadConfig(string configName, string defaultValue = "")
         {
             try
             {
@@ -17,7 +17,7 @@ namespace StressLoadDemo.Helpers.Configuration
             }
             catch
             {
-                return string.Empty;
+                return defaultValue;
             }
         }
     }

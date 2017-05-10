@@ -58,7 +58,7 @@ namespace StressLoadDemo.Helpers.Batch
 
                 try
                 {
-                    Messenger.Default.Send($"{DateTime.Now.ToString("T")} - Create Pool ({testJob.NumofVm} core)", "RunningLog");
+                    Messenger.Default.Send($"{DateTime.Now.ToString("T")} - Create Pool if needed ({testJob.NumofVm} core)", "RunningLog");
                     await CreatePoolIfNotExistAsync(batchClient, StorageAccount, testJob);
                     Messenger.Default.Send(
                         new DeployStatusUpdateMessage()
@@ -70,7 +70,7 @@ namespace StressLoadDemo.Helpers.Batch
                 }
                 catch (Exception ex)
                 {
-                    Messenger.Default.Send($"{DateTime.Now.ToString("T")} - delete test due to {ex.Message}", "RunningLog");
+                    Messenger.Default.Send($"{DateTime.Now.ToString("T")} - Delete test due to {ex.Message}", "RunningLog");
                     Messenger.Default.Send(
                         new DeployStatusUpdateMessage()
                         {
@@ -93,7 +93,7 @@ namespace StressLoadDemo.Helpers.Batch
                 }
                 catch (Exception ex)
                 {
-                    Messenger.Default.Send($"{DateTime.Now.ToString("T")} - delete test due to {ex.Message}", "RunningLog");
+                    Messenger.Default.Send($"{DateTime.Now.ToString("T")} - Delete test due to {ex.Message}", "RunningLog");
                     Messenger.Default.Send(
                         new DeployStatusUpdateMessage()
                         {

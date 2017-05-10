@@ -31,9 +31,9 @@ namespace StressLoadDemo.ViewModel
             _vmRecommendation= "";
             _buttonEnabled = false;
 
-            var totaldevice = ConfigurationHelper.ReadConfig(StressToolConstants.TotalDevice_ConfigName);
-            var messagefreq = ConfigurationHelper.ReadConfig(StressToolConstants.MessageFreq_ConfigName);
-            var duration = ConfigurationHelper.ReadConfig(StressToolConstants.ExpectDuration_ConfigName);
+            var totaldevice = ConfigurationHelper.ReadConfig(StressToolConstants.TotalDevice_ConfigName, "60");
+            var messagefreq = ConfigurationHelper.ReadConfig(StressToolConstants.MessageFreq_ConfigName, "6");
+            var duration = ConfigurationHelper.ReadConfig(StressToolConstants.ExpectDuration_ConfigName, "2");
 
             TotalDevice = totaldevice;
             MessagePerMinPerDevice = messagefreq;
