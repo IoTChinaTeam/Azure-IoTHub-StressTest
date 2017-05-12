@@ -11,7 +11,7 @@ This tab helps to convert from expections, such as total device count, message r
 Here is the list of azure resources and credentials we need to run the test:
 
 - Azure IoT Hub: owner connection string and Event Hub endpoint
-- Azure Batch: service URL and access key
+- Azure Batch: service URL and access key 
 - Azure Storage Account: connection string (needed for batch service)
 
 Hint:
