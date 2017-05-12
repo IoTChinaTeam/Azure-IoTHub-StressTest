@@ -13,12 +13,13 @@ namespace StressLoadDemo.Model.DataProvider.ReceiverTool
 
         public static EventHubReceiver GetReceiver(EventHubConsumerGroup consumerGroup,string partitionId,DateTime startDateTimeUtc)
         {
-            if (receiver != null)
+            if (receiver != null&&receiver.PartitionId == partitionId)
             {
                 return receiver;
             }
             else
             {
+                receiver?.Close();
                 receiver = consumerGroup.CreateReceiver(partitionId, startDateTimeUtc);
                 return receiver;
             }
