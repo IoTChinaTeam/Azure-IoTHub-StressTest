@@ -39,6 +39,7 @@ namespace StressLoadDemo.Model.DataProvider
                 configSettings.ConnectionString = $"Endpoint={provider.EventHubEndpoint};SharedAccessKeyName={builder.SharedAccessKeyName};SharedAccessKey={builder.SharedAccessKey}";
                 configSettings.Path = builder.HostName.Split('.').First();
                 configSettings.PartitionId = "0";
+                configSettings.GroupName = provider.ConsumerGroupName;
                 //"$Default";
                 configSettings.StartingDateTimeUtc = DateTime.UtcNow - TimeSpan.FromMinutes(2);
                 pause = false;

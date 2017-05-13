@@ -457,10 +457,10 @@ namespace StressLoadDemo.ViewModel
             RefreshBtnEnabled = false;
             _refreshTaskTimer.Enabled = true;
             _refreshDataTimer.Enabled = true;
-            MessageSeriesCollection[0].Values = new ChartValues<double>();
-            DeviceSeriesCollection[0].Values = new ChartValues<double>();
+            MessageSeriesCollection[0].Values = new ChartValues<double>() { 0.0};
+            DeviceSeriesCollection[0].Values = new ChartValues<double>() { 0.0};
             DeviceRealTimeNumber = 0; MessageRealTimeNumber = 0;
-            TaskTotalCount = 0; TaskCompleteCount = 0;
+            TaskTotalCount = 0; TaskCompleteCount = 0;TaskActiveCount = 0;TaskRunningCount = 0;
         }
 
         void ProcessMonitorConfig(IStressDataProvider provider)

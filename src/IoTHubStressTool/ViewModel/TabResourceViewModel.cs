@@ -458,9 +458,9 @@ namespace StressLoadDemo.ViewModel
             _dataProvider.EventHubEndpoint = _eventHubEndpoint;
             _dataProvider.BatchUrl = _batchServiceUrl;
             _dataProvider.BatchJobId = _batchJobId;
+            _dataProvider.ConsumerGroupName = ConfigurationHelper.ReadConfig(StressToolConstants.ConsumerGroup_ConfigName, "$Default");
             Messenger.Default.Send<IStressDataProvider>(_dataProvider, "StartMonitor");
             new ViewModelLocator().Main.SelectedTabIndex = 2;
-
         }
 
         void ProcessRunConfigValue()
